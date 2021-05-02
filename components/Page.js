@@ -22,7 +22,7 @@ class Page extends HTMLElement {
             <pageheader-component page-title="Dashboard"></pageheader-component>
 
             <!-- Table -->
-            <table-component></table-component>
+            <table-component endpoint=""></table-component>
 
             <pagination-component></pagination-component>
 

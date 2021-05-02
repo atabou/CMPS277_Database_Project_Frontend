@@ -19,9 +19,9 @@ class SideBarComponent extends HTMLElement {
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <span data-feather="file"></span>
-                                Orders
+                            <a class="nav-link" href="javascript:loadCompany();">
+                                <span data-feather="globe"></span>
+                                Companies
                             </a>
                         </li>
 
@@ -108,6 +108,15 @@ class SideBarComponent extends HTMLElement {
 
     }
 
+
+}
+
+const endpoint = "http://127.0.0.1:5000/api"
+
+function loadCompany() {
+
+    table = document.getElementsByTagName("table-component");
+    table[0].setAttribute("endpoint", endpoint + "/company");
 
 }
 

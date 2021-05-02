@@ -1,145 +1,8 @@
 
 
-let headers = [
+let headers = []
 
-            "#",
-            "Header1",
-            "Header2",
-            "Header3",
-            "Header4"
-        
-]
-
-let data = [
-
-    {
-        "#": 1001,
-        Header1: "Lorem",
-        Header2: "ipsum",
-        Header3: "dolor",
-        Header4: "sit"
-    },
-
-    {
-        "#": 1002,
-        Header1: "amet",
-        Header2: "consectetur",
-        Header3: "adipiscing",
-        Header4: "elit"
-    },
-
-    {
-        "#": 1003,
-        Header1: "Integer",
-        Header2: "nec",
-        Header3: "odio",
-        Header4: "Praesent"
-    },
-
-    {
-        "#": 1003,
-        Header1: "libero",
-        Header2: "Sed",
-        Header3: "cursus",
-        Header4: "ante"
-    },
-
-    {
-        "#": 1004,
-        Header1: "dapibus",
-        Header2: "diam",
-        Header3: "Sed",
-        Header4: "nisi"
-    },
-
-    {
-        "#": 1005,
-        Header1: "Nulla",
-        Header2: "quis",
-        Header3: "sem",
-        Header4: "at"
-    },
-
-    {
-        "#": 1006,
-        Header1: "nibh",
-        Header2: "elementum",
-        Header3: "imperdiet",
-        Header4: "Duis"
-    },
-
-    {
-        "#": 1007,
-        Header1: "sagittis",
-        Header2: "ipsum",
-        Header3: "Praesent",
-        Header4: "mauris"
-    },
-
-    {
-        "#": 1008,
-        Header1: "Fusce",
-        Header2: "nec",
-        Header3: "tellus",
-        Header4: "sed"
-    },
-
-    {
-        "#": 1009,
-        Header1: "augue",
-        Header2: "semper",
-        Header3: "porta",
-        Header4: "Mauris"
-    },
-
-    {
-        "#": 1010,
-        Header1: "massa",
-        Header2: "Vestibulum",
-        Header3: "lacinia",
-        Header4: "arcu"
-    },
-
-    {
-        "#": 1011,
-        Header1: "eget",
-        Header2: "nulla",
-        Header3: "Class",
-        Header4: "aptent"
-    },
-
-    {
-        "#": 1012,
-        Header1: "taciti",
-        Header2: "sociosqu",
-        Header3: "ad",
-        Header4: "litora"
-    },
-
-    {
-        "#": 1013,
-        Header1: "torquent",
-        Header2: "per",
-        Header3: "conubia",
-        Header4: "nostra"
-    },
-
-    {
-        "#": 1014,
-        Header1: "per",
-        Header2: "inceptos",
-        Header3: "himenaeos",
-        Header4: "Curabitur"
-    },
-
-    {
-        "#": 1015,
-        Header1: "sodales",
-        Header2: "ligula",
-        Header3: "ins",
-        Header4: "libero"
-    }
-];
+let rows = [];
 
 class TableComponent extends HTMLElement {
 
@@ -192,7 +55,7 @@ class TableComponent extends HTMLElement {
         let rowsPerPage = parseInt(this.getAttribute("rows-per-page"));
 
         let pagination = this.getElementsByTagName("pagination-component");
-        pagination[0].setAttribute("max", `${Math.ceil(data.length/rowsPerPage)}`);
+        pagination[0].setAttribute("max", `${Math.ceil(rows.length/rowsPerPage)}`);
 
         this.setAttribute( "page", "0" );
 
@@ -200,37 +63,82 @@ class TableComponent extends HTMLElement {
 
     static get observedAttributes() {
         return [
-            "page"
+            "page",
+            "endpoint"
         ];
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
 
-        let rowsPerPage = parseInt(this.getAttribute("rows-per-page"));
+        if( name === "page" ) {
 
-        let tbody = this.getElementsByClassName("t-body");
-        tbody[0].innerHTML = ``;
+            let rowsPerPage = parseInt(this.getAttribute("rows-per-page"));
 
-        for( let i=0; i<rowsPerPage; i++ ) {
+            let tbody = this.getElementsByClassName("t-body");
+            tbody[0].innerHTML = ``;
 
-            let tr = document.createElement("tr");
+            for( let i=0; i<rowsPerPage; i++ ) {
 
-            for( let j=0; j<headers.length; j++ ) {
-                let td = document.createElement( "td" );
-                if (rowsPerPage*newValue + i < data.length) {
-                    td.innerHTML = data[rowsPerPage*newValue + i][headers[j]];
-                } else {
-                    td.innerHTML = "&nbsp";
+                let tr = document.createElement("tr");
+
+                for( let j=0; j<headers.length; j++ ) {
+                    let td = document.createElement( "td" );
+                    if (rowsPerPage*newValue + i < rows.length) {
+                        td.innerHTML = rows[rowsPerPage*newValue + i][headers[j]];
+                    } else {
+                        td.innerHTML = "&nbsp";
+                    }
+                    tr.appendChild( td );
                 }
-                tr.appendChild( td );
+
+                tbody[0].appendChild(tr);
+
             }
 
-            tbody[0].appendChild(tr);
+            let pagination = this.getElementsByTagName("pagination-component");
+            pagination[0].setAttribute("current", `${parseInt(newValue) + 1}`);
+
+        } else if (name === "endpoint") {
+
+            headers = [];
+            rows = [];
+
+            fetch( newValue, { 
+                method: 'GET' 
+            }).then( (res) => {
+
+                return res.json();
+
+            }).then( (data) => {
+
+                console.log(data);
+                headers = Object.keys( data[0] );
+                rows = data;
+
+                let tr = this.getElementsByClassName("t-header");
+
+                for( let i=0; i<headers.length; i++ ) {
+                    
+                    let th = document.createElement( "th" );
+                    th.innerHTML = headers[i];
+                    tr[0].appendChild(th);
+
+                }
+
+                let rowsPerPage = parseInt(this.getAttribute("rows-per-page"));
+
+                let pagination = this.getElementsByTagName("pagination-component");
+                pagination[0].setAttribute("max", `${Math.ceil(rows.length/rowsPerPage)}`);
+
+                this.setAttribute( "page", "0" );
+
+            }).catch( (err) => {
+
+                console.log(err);
+
+            });
 
         }
-
-        let pagination = this.getElementsByTagName("pagination-component");
-        pagination[0].setAttribute("current", `${parseInt(newValue) + 1}`);
     
     }
 
