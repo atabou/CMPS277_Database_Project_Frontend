@@ -1,14 +1,14 @@
 
 
-let headers = []
-
-let rows = [];
 
 class TableComponent extends HTMLElement {
 
     constructor( ) {
 
         super();
+
+        this.headers = [];
+        this.rows = [];
 
         let tr = document.createElement( "tr" );
         tr.className = "t-header";
@@ -43,10 +43,10 @@ class TableComponent extends HTMLElement {
 
         let tr = this.getElementsByClassName("t-header");
 
-        for( let i=0; i<headers.length; i++ ) {
+        for( let i=0; i<this.headers.length; i++ ) {
             
             let th = document.createElement( "th" );
-            th.innerHTML = headers[i];
+            th.innerHTML = this.headers[i];
             tr[0].appendChild(th);
 
         }
@@ -55,7 +55,7 @@ class TableComponent extends HTMLElement {
         let rowsPerPage = parseInt(this.getAttribute("rows-per-page"));
 
         let pagination = this.getElementsByTagName("pagination-component");
-        pagination[0].setAttribute("max", `${Math.ceil(rows.length/rowsPerPage)}`);
+        pagination[0].setAttribute("max", `${Math.ceil(this.rows.length/rowsPerPage)}`);
 
         this.setAttribute( "page", "0" );
 
@@ -81,10 +81,10 @@ class TableComponent extends HTMLElement {
 
                 let tr = document.createElement("tr");
 
-                for( let j=0; j<headers.length; j++ ) {
+                for( let j=0; j<this.headers.length; j++ ) {
                     let td = document.createElement( "td" );
-                    if (rowsPerPage*newValue + i < rows.length) {
-                        td.innerHTML = rows[rowsPerPage*newValue + i][headers[j]];
+                    if (rowsPerPage*newValue + i < this.rows.length) {
+                        td.innerHTML = this.rows[rowsPerPage*newValue + i][this.headers[j]];
                     } else {
                         td.innerHTML = "&nbsp";
                     }
@@ -100,27 +100,29 @@ class TableComponent extends HTMLElement {
 
         } else if (name === "endpoint") {
 
-            headers = [];
-            rows = [];
+            this.headers = [];
+            this.rows = [];
 
             fetch( newValue, { 
+
                 method: 'GET' 
+
             }).then( (res) => {
 
                 return res.json();
 
             }).then( (data) => {
 
-                console.log(data);
-                headers = Object.keys( data[0] );
-                rows = data;
+                this.headers = Object.keys( data[0] );
+                this.rows = data;
 
                 let tr = this.getElementsByClassName("t-header");
+                tr[0].innerHTML = "";
 
-                for( let i=0; i<headers.length; i++ ) {
+                for( let i=0; i<this.headers.length; i++ ) {
                     
                     let th = document.createElement( "th" );
-                    th.innerHTML = headers[i];
+                    th.innerHTML = this.headers[i];
                     tr[0].appendChild(th);
 
                 }
@@ -128,7 +130,7 @@ class TableComponent extends HTMLElement {
                 let rowsPerPage = parseInt(this.getAttribute("rows-per-page"));
 
                 let pagination = this.getElementsByTagName("pagination-component");
-                pagination[0].setAttribute("max", `${Math.ceil(rows.length/rowsPerPage)}`);
+                pagination[0].setAttribute("max", `${Math.ceil(this.rows.length/rowsPerPage)}`);
 
                 this.setAttribute( "page", "0" );
 
