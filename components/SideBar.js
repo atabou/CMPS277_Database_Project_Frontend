@@ -39,6 +39,13 @@ class SideBarComponent extends HTMLElement {
                             </a>
                         </li>
 
+                        <li class="nav-item">
+                            <a id="PatientSection" class="nav-link" href="javascript:loadPatient();">
+                                <span data-feather="users"></span>
+                                Patients
+                            </a>
+                        </li>
+
                     </ul>
 
                     <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
@@ -450,6 +457,150 @@ function loadDoctor() {
                         "LastName": DoctorLastName,
                         "Address": DoctorAddress,
                         "Specialty": DoctorSpecialty
+                    })
+    
+                }).then( (res) => {
+
+                    const submitButton = document.getElementsByClassName("submit-record");
+                    submitButton[0].removeAttribute("disabled");
+                    submitButton[0].removeChild(submitButton[0].lastChild);
+
+                    $('#addNewRecord').modal('hide');
+
+                })
+
+            }
+
+            
+
+        },
+        deleteModal,
+        null
+    );
+
+}
+
+
+function loadPatient() {
+
+    // Deactivate current section
+    const currentActiveSection = document.getElementsByClassName("nav-link active");
+    currentActiveSection[0].setAttribute("class", "nav-link");
+
+    // Set section to Patients
+    const currentTable = document.getElementById("PatientSection");
+    currentTable.setAttribute("class", "nav-link active");
+
+    // Set title of the page to Patient
+    document.getElementsByTagName("pageheader-component")[0].setAttribute("page-title", "Patient");
+
+    // Set endpoint of table to /patient
+    const table = document.getElementsByTagName("table-component");
+    table[0].setAttribute("endpoint", endpoint + "/patient");
+
+    // Construct modal content to create a new patient
+    const createModal = /*html*/`
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Patient</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form>
+                <div class="form-group">
+                    <label for="PatientTableFirstName">Patient First Name *</label>
+                    <input type="text" class="form-control" id="PatientTableFirstName" aria-describedby="Enter the Patient's first name" placeholder="Patient First Name">
+                </div>
+                <div class="form-group">
+                    <label for="PatientTableLastName">Patient Last Name *</label>
+                    <input type="text" class="form-control" id="PatientTableLastName" aria-describedby="Enter the Patient's last name" placeholder="Patient Last Name">
+                </div>
+                <div class="form-group">
+                    <label for="PatientTableBirthDate">Patient Birth Date *</label>
+                    <input type="date" class="form-control" id="PatientTableBirthDate" aria-describedby="Enter the Patient's birth date" placeholder="Patient Birth Date">
+                </div>
+                <div class="form-group">
+                    <label for="PatientTableSS_Status">Patient SS_Status *</label>
+                    <input type="text" class="form-control" id="PatientTableSS_Status" aria-describedby="Enter the Patient's Status" placeholder="Patient SS_Status">
+                </div>
+                <div class="form-group">
+                    <label for="PatientTableAddress">Patient Address *</label>
+                    <input type="text" class="form-control" id="PatientTableAddress" aria-describedby="Enter the Patient's address" placeholder="Patient Address">
+                </div>
+                <div class="form-group">
+                    <label for="PatientTablePhoneNumber">Patient Phone Number *</label>
+                    <input type="text" class="form-control" id="PatientPhoneNumber" aria-describedby="Enter the Patient's phone number" placeholder="Patient Phone Number">
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary submit-record">Submit</button>
+            <button type="button" class="btn btn-secondary dismiss-modal" data-dismiss="modal">Close</button>
+        </div>
+    `;
+
+    // Construct modal content to delete a new patient 
+    const deleteModal = /*html*/`
+        <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Delete Patient</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        </div>
+        <div class="modal-body">
+            Are you sure that you want to delete this record?
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary submit-delete-record">
+                <span class="sr-only">Yes</span>
+            </button>
+            <button type="button" class="btn btn-secondary dismiss-delete-record" data-dismiss="modal">No</button>
+        </div>
+    `;
+
+    // Update the page header components with new modal content and function for the buttons New Record and Delete Record
+    const page_header = document.getElementsByTagName("pageheader-component");
+    page_header[0].loadFunctions( 
+        createModal, 
+        () => {
+
+            PatientFirstName = document.getElementById("PatientTableFirstName").value;
+            PatientLastName = document.getElementById("PatientTableLastName").value;
+            PatientBirthDate = document.getElementById("PatientTableBirthDate").value;
+            PatientSS_Status = document.getElementById("PatientTableSS_Status").value;
+            PatientAddress = document.getElementById("PatientTableAddress").value;
+            PatientPhoneNumber = document.getElementById("PatientTablePhoneNumber").value;
+
+            if( PatientFirstName === "" && PatientLastName === "" && PatientSS_Status === "" && PatientAddress === "" && PatientPhoneNumber === "") {
+
+                alert("You have not filled the required fields.");
+
+            } else {
+
+                const loadingIcon = document.createElement("span");
+                loadingIcon.setAttribute("class", "spinner-border spinner-border-sm");
+                loadingIcon.setAttribute("role", "status");
+                loadingIcon.setAttribute("aria-hidden", "true");
+
+                const submitButton = document.getElementsByClassName("submit-record");
+                submitButton[0].setAttribute("disabled", true);
+                submitButton[0].appendChild(loadingIcon);
+
+
+                fetch( endpoint + "/patient", {
+
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        "FirstName": PatientFirstName,
+                        "LastName": PatientLastName,
+                        "BirthDate": PatientBirthDate,
+                        "SS_Status": PatientSS_Status,
+                        "Address": PatientAddress,
+                        "PhoneNumber": PatientPhoneNumber
                     })
     
                 }).then( (res) => {
