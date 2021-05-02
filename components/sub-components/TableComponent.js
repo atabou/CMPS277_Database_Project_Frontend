@@ -113,8 +113,14 @@ class TableComponent extends HTMLElement {
 
             }).then( (data) => {
 
-                this.headers = Object.keys( data[0] );
+                if ( data.length > 0 ) {
+                    this.headers = Object.keys( data[0] );
+                } else {
+                    this.headers = [];
+                }
                 this.rows = data;
+
+                console.log(data);
 
                 let tr = this.getElementsByClassName("t-header");
                 tr[0].innerHTML = "";
