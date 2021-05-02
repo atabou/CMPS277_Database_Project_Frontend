@@ -33,6 +33,13 @@ class SideBarComponent extends HTMLElement {
                         </li>
 
                         <li class="nav-item">
+                            <a id="DoctorSection" class="nav-link" href="javascript:loadDoctor();">
+                                <span data-feather="user"></span>
+                                Doctors
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
                             <a class="nav-link" href="#">
                                 <span data-feather="shopping-cart"></span>
                                 Products
@@ -360,6 +367,138 @@ function loadVaccine() {
                         "ShelfLife": VaccineShelfLife,
                         "DosesRequired": VaccineDosesRequired,
                         "TimeSeperation": VaccineTimeSeperation
+                    })
+    
+                }).then( (res) => {
+
+                    const submitButton = document.getElementsByClassName("submit-record");
+                    submitButton[0].removeAttribute("disabled");
+                    submitButton[0].removeChild(submitButton[0].lastChild);
+
+                    $('#addNewRecord').modal('hide');
+
+                })
+
+            }
+
+            
+
+        },
+        deleteModal,
+        null
+    );
+
+}
+
+
+function loadDoctor() {
+
+    // Deactivate current section
+    const currentActiveSection = document.getElementsByClassName("nav-link active");
+    currentActiveSection[0].setAttribute("class", "nav-link");
+
+    // Set section to Doctors
+    const currentTable = document.getElementById("DoctorSection");
+    currentTable.setAttribute("class", "nav-link active");
+
+    // Set title of the page to Doctor
+    document.getElementsByTagName("pageheader-component")[0].setAttribute("page-title", "Doctor");
+
+    // Set endpoint of table to /doctor
+    const table = document.getElementsByTagName("table-component");
+    table[0].setAttribute("endpoint", endpoint + "/doctor");
+
+    // Construct modal content to create a new doctor
+    const createModal = /*html*/`
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Company</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form>
+                <div class="form-group">
+                    <label for="DoctorTableFirstName">Doctor First Name *</label>
+                    <input type="text" class="form-control" id="DoctorTableFirstName" aria-describedby="Enter the Doctor's first name" placeholder="Doctor First Name">
+                </div>
+                <div class="form-group">
+                    <label for="DoctorTableLastName">Doctor Last Name *</label>
+                    <input type="text" class="form-control" id="DoctorTableLastName" aria-describedby="Enter the Doctor's last name" placeholder="Doctor Last Name">
+                </div>
+                <div class="form-group">
+                    <label for="DoctorTableAddress">Doctor Address *</label>
+                    <input type="text" class="form-control" id="DoctorTableAddress" aria-describedby="Enter the Doctor's address" placeholder="Doctor Address">
+                </div>
+                <div class="form-group">
+                    <label for="DoctorTableSpecialty">Doctor Specialty *</label>
+                    <input type="text" class="form-control" id="DoctorTableSpecialty" aria-describedby="Enter the Doctor's specialty" placeholder="Doctor Specialty">
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary submit-record">Submit</button>
+            <button type="button" class="btn btn-secondary dismiss-modal" data-dismiss="modal">Close</button>
+        </div>
+    `;
+
+    // Construct modal content to delete a new doctor 
+    const deleteModal = /*html*/`
+        <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Delete Doctor</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        </div>
+        <div class="modal-body">
+            Are you sure that you want to delete this record?
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary submit-delete-record">
+                <span class="sr-only">Yes</span>
+            </button>
+            <button type="button" class="btn btn-secondary dismiss-delete-record" data-dismiss="modal">No</button>
+        </div>
+    `;
+
+    // Update the page header components with new modal content and function for the buttons New Record and Delete Record
+    const page_header = document.getElementsByTagName("pageheader-component");
+    page_header[0].loadFunctions( 
+        createModal, 
+        () => {
+
+            DoctorFirstName = document.getElementById("DoctorTableFirstName").value;
+            DoctorLastName = document.getElementById("DoctorTableLastName").value;
+            DoctorAddress = document.getElementById("DoctorTableAddress").value;
+            DoctorSpecialty = document.getElementById("DoctorTableSpecialty").value;
+
+            if( DoctorFirstName === "" && DoctorLastName === ""  && DoctorAddress === "" && DoctorSpecialty === "") {
+
+                alert("You have not filled the required fields.");
+
+            } else {
+
+                const loadingIcon = document.createElement("span");
+                loadingIcon.setAttribute("class", "spinner-border spinner-border-sm");
+                loadingIcon.setAttribute("role", "status");
+                loadingIcon.setAttribute("aria-hidden", "true");
+
+                const submitButton = document.getElementsByClassName("submit-record");
+                submitButton[0].setAttribute("disabled", true);
+                submitButton[0].appendChild(loadingIcon);
+
+
+                fetch( endpoint + "/doctor", {
+
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        "FirstName": DoctorFirstName,
+                        "LastName": DoctorLastName,
+                        "Address": DoctorAddress,
+                        "Specialty": DoctorSpecialty
                     })
     
                 }).then( (res) => {
