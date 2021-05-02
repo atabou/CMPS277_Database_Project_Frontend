@@ -26,6 +26,13 @@ class SideBarComponent extends HTMLElement {
                         </li>
 
                         <li class="nav-item">
+                            <a id="VaccineSection" class="nav-link" href="javascript:loadVaccine();">
+                                <span data-feather="info"></span>
+                                Vaccines
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
                             <a class="nav-link" href="#">
                                 <span data-feather="shopping-cart"></span>
                                 Products
@@ -209,6 +216,150 @@ function loadCompany() {
                     body: JSON.stringify({
                         "Name": CompanyName,
                         "Location": CompanyLocation
+                    })
+    
+                }).then( (res) => {
+
+                    const submitButton = document.getElementsByClassName("submit-record");
+                    submitButton[0].removeAttribute("disabled");
+                    submitButton[0].removeChild(submitButton[0].lastChild);
+
+                    $('#addNewRecord').modal('hide');
+
+                })
+
+            }
+
+            
+
+        },
+        deleteModal,
+        null
+    );
+
+}
+
+function loadVaccine() {
+
+    // Deactivate current section
+    const currentActiveSection = document.getElementsByClassName("nav-link active");
+    currentActiveSection[0].setAttribute("class", "nav-link");
+
+    // Set section to Vaccines
+    const currentTable = document.getElementById("VaccineSection");
+    currentTable.setAttribute("class", "nav-link active");
+
+    // Set title of the page to Vaccine
+    document.getElementsByTagName("pageheader-component")[0].setAttribute("page-title", "Vaccine");
+
+    // Set endpoint of table to /vaccine
+    const table = document.getElementsByTagName("table-component");
+    table[0].setAttribute("endpoint", endpoint + "/vaccine");
+
+    // Construct modal content to create a new vaccine
+    const createModal = /*html*/`
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Vaccine</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form>
+                <div class="form-group">
+                    <label for="VaccineTableName">Vaccine Name *</label>
+                    <input type="text" class="form-control" id="VaccineTableName" aria-describedby="Enter the vaccine name" placeholder="Vaccine Name">
+                </div>
+                <div class="form-group">
+                    <label for="VaccineTableDescription">Vaccine Description *</label>
+                    <input type="text" class="form-control" id="VaccineTableDescription" aria-describedby="Enter the vaccine description" placeholder="Vaccine Description">
+                </div>
+                <div class="form-group">
+                    <label for="VaccineTableStorageTemp">Vaccine Storage Temperature *</label>
+                    <input type="text" class="form-control" id="VaccineTableStorageTemp" aria-describedby="Enter the vaccine storage temperature" placeholder="Vaccine Storage Temperature">
+                </div>
+                <div class="form-group">
+                    <label for="VaccineTableShelfLife">Vaccine Shelf Life *</label>
+                    <input type="text" class="form-control" id="VaccineTableShelfLife" aria-describedby="Enter the vaccine shelf life" placeholder="Vaccine Shelf Life">
+                </div>
+                <div class="form-group">
+                    <label for="VaccineTableDosesRequired">Vaccine Doses Required *</label>
+                    <input type="text" class="form-control" id="VaccineTableDosesRequired" aria-describedby="Enter the vaccine doses required" placeholder="Vaccine Doses Required">
+                </div>
+                <div class="form-group">
+                    <label for="VaccineTableTimeSeperation">Vaccine Time Seperation *</label>
+                    <input type="text" class="form-control" id="VaccineTableTimeSeperation" aria-describedby="Enter the vaccine time seperation" placeholder="Vaccine Time Seperation">
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary submit-record">Submit</button>
+            <button type="button" class="btn btn-secondary dismiss-modal" data-dismiss="modal">Close</button>
+        </div>
+    `;
+
+    // Construct modal content to delete a new vaccine 
+    const deleteModal = /*html*/`
+        <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Delete Vaccine</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        </div>
+        <div class="modal-body">
+            Are you sure that you want to delete this record?
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary submit-delete-record">
+                <span class="sr-only">Yes</span>
+            </button>
+            <button type="button" class="btn btn-secondary dismiss-delete-record" data-dismiss="modal">No</button>
+        </div>
+    `;
+
+    // Update the page header components with new modal content and function for the buttons New Record and Delete Record
+    const page_header = document.getElementsByTagName("pageheader-component");
+    page_header[0].loadFunctions( 
+        createModal, 
+        () => {
+
+            VaccineName = document.getElementById("VaccineTableName").value;
+            VaccineDescription = document.getElementById("VaccineTableDescription").value;
+            VaccineStorageTemp = document.getElementById("VaccineTableStorageTemp").value;
+            VaccineShelfLife = document.getElementById("VaccineTableShelfLife").value;
+            VaccineDosesRequired = document.getElementById("VaccineTableDosesRequired").value;
+            VaccineTimeSeperation = document.getElementById("VaccineTableTimeSeperation").value;
+
+            if( VaccineName === "" && VaccineDescription === "" && VaccineStorageTemp === ""
+            && VaccineShelfLife === "" && VaccineDosesRequired === "" && VaccineTimeSeperation === "") {
+
+                alert("You have not filled the required fields.");
+
+            } else {
+
+                const loadingIcon = document.createElement("span");
+                loadingIcon.setAttribute("class", "spinner-border spinner-border-sm");
+                loadingIcon.setAttribute("role", "status");
+                loadingIcon.setAttribute("aria-hidden", "true");
+
+                const submitButton = document.getElementsByClassName("submit-record");
+                submitButton[0].setAttribute("disabled", true);
+                submitButton[0].appendChild(loadingIcon);
+
+
+                fetch( endpoint + "/vaccine", {
+
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        "Name": VaccineName,
+                        "Description": VaccineDescription,
+                        "StorageTemp": VaccineStorageTemp,
+                        "ShelfLife": VaccineShelfLife,
+                        "DosesRequired": VaccineDosesRequired,
+                        "TimeSeperation": VaccineTimeSeperation
                     })
     
                 }).then( (res) => {
