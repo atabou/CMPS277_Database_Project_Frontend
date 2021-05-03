@@ -24,6 +24,14 @@ class SideBarComponent extends HTMLElement {
                                 Companies
                             </a>
                         </li>
+                        
+                        <li class="nav-item">
+                            <a id="HospitalSection" class="nav-link active" href="javascript:loadHospital();">
+                                <span data-feather="activity"></span>
+                                Hospitals
+                            </a>
+                        </li>
+
 
                         <li class="nav-item">
                             <a id="VaccineSection" class="nav-link" href="javascript:loadVaccine();">
@@ -203,6 +211,158 @@ function loadCompany() {
     );
 
 }
+
+functionloadHospital()
+{
+    // Deactivate current section
+    const currentActiveSection = document.getElementsByClassName("nav-link active");
+    currentActiveSection[0].setAttribute("class", "nav-link");
+
+    // Set section to Vaccines
+    const currentTable = document.getElementById("VaccineSection");
+    currentTable.setAttribute("class", "nav-link active");
+
+    // Set title of the page to Hospital
+    document.getElementsByTagName("pageheader-component")[0].setAttribute("page-title", "Hospital");
+
+    // Set endpoint of table to /hospital
+    const table = document.getElementsByTagName("table-component");
+    table[0].setAttribute("endpoint", endpoint + "/hospital");
+
+    // Construct modal content to create a new vaccine
+    const createModal = /*html*/`
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Hospital</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form>
+                <div class="form-group">
+                    <label for="HospitalTableName">Hospital Name*</label>
+                    <input type="text" class="form-control" id="HospitalTableName" aria-describedby="Enter the Hospital name" placeholder="Hospital Name">
+                </div>
+                <div class="form-group">
+                    <label for="HospitalTableAddress">Hospital Address*</label>
+                    <input type="text" class="form-control" id="HospitalTableAddress" aria-describedby="Enter the hospital address" placeholder="Hospital Address">
+                </div>
+
+                <div class="form-group">
+                <p>Please select the hospital type:<p>
+                    <input type="radio" class="form-control" id="public" name="type" value="public">
+                    <label for="public">Public</label>
+                    <br>
+                    <input type="radio" class "form-control" id="private" name="type" value="private">
+                    <label for="private">Private</label> 
+                </div>
+
+                <div class="form-group">
+                <p>Hospital offers vaccination:<p>
+                    <input type="radio" class="form-control" id="offers" name="vaccination" value="offers">
+                    <label for="public">Yes</label>
+                    <br>
+                    <input type="radio" class "form-control" id="notoffer" name="vaccination" value="notoffer">
+                    <label for="private">No</label> 
+                </div>
+
+                <div class="form-group">
+                    <label for="HospitalTableStorageProvider">Storage Provider ID*</label>
+                    <input type="text" class="form-control" id="HospitalTableStorageProvider" aria-describedby="Enter the storage provider ID" placeholder="Storage Provider ID">
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary submit-record">Submit</button>
+            <button type="button" class="btn btn-secondary dismiss-modal" data-dismiss="modal">Close</button>
+        </div>
+    `;
+
+    // Construct modal content to delete a new Hospital 
+    const deleteModal = /*html*/`
+        <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Delete Vaccine</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        </div>
+        <div class="modal-body">
+            Are you sure that you want to delete this record?
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary submit-delete-record">
+                <span class="sr-only">Yes</span>
+            </button>
+            <button type="button" class="btn btn-secondary dismiss-delete-record" data-dismiss="modal">No</button>
+        </div>
+    `;
+
+    // Update the page header components with new modal content and function for the buttons New Record and Delete Record
+    const page_header = document.getElementsByTagName("pageheader-component");
+    page_header[0].loadFunctions( 
+        createModal, 
+        () => {
+
+            HospitalName = document.getElementById("HospitalTableName").value;
+            HospitalAddress = document.getElementById("HospitalTableAddress").value;
+            HospitalType = document.getElementById("VaccineTableStorageTemp").value;
+            VaccineOffer = document.getElementById("VaccineTableShelfLife").value;
+            StorageProviderID = document.getElementById("HospitalTableStorageProvider").value;
+            
+            var len1 = $('input:radio[name="vaccination"]:checked').size();
+            var len2 = $('input:radio[name="type"]:checked').size(); //check if a button was selected
+            
+            if( HospitalName === "" && HospitalAddress === "" && len1 === 0 && len2==0
+            && StorageProviderID=="") {
+
+                alert("You have not filled the required fields.");
+
+            } else {
+
+                const loadingIcon = document.createElement("span");
+                loadingIcon.setAttribute("class", "spinner-border spinner-border-sm");
+                loadingIcon.setAttribute("role", "status");
+                loadingIcon.setAttribute("aria-hidden", "true");
+
+                const submitButton = document.getElementsByClassName("submit-record");
+                submitButton[0].setAttribute("disabled", true);
+                submitButton[0].appendChild(loadingIcon);
+
+
+                fetch( endpoint + "/vaccine", {
+
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        "Name": HospitalName,
+                        "Address": HospitalAddress,
+                        // "Type":,
+                        //"Offers Vaccination":,
+                        "Storage Provider ID":StorageProviderID 
+                    })
+    
+                }).then( (res) => {
+
+                    const submitButton = document.getElementsByClassName("submit-record");
+                    submitButton[0].removeAttribute("disabled");
+                    submitButton[0].removeChild(submitButton[0].lastChild);
+
+                    $('#addNewRecord').modal('hide');
+
+                })
+
+            }
+
+            
+
+        },
+        deleteModal,
+        null
+    );
+}
+
 
 function loadVaccine() {
 
@@ -626,6 +786,3 @@ function loadPatient() {
 
 
 window.customElements.define('sidebar-component', SideBarComponent);
-    
-    
-
