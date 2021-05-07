@@ -26,6 +26,21 @@ class SideBarComponent extends HTMLElement {
                         </li>
 
                         <li class="nav-item">
+                            <a id="OrderSection" class="nav-link" href="javascript:loadOrders();">
+                                <span data-feather="globe"></span>
+                                Orders
+                            </a>
+                        </li>
+                        
+                        <li class="nav-item">
+                            <a id="HospitalSection" class="nav-link" href="javascript:loadHospital();">
+                                <span data-feather="activity"></span>
+                                Hospitals
+                            </a>
+                        </li>
+
+
+                        <li class="nav-item">
                             <a id="VaccineSection" class="nav-link" href="javascript:loadVaccine();">
                                 <span data-feather="info"></span>
                                 Vaccines
@@ -203,6 +218,421 @@ function loadCompany() {
     );
 
 }
+
+function loadOrders() {
+    
+    // Deactivate current section
+    const currentActiveSection = document.getElementsByClassName("nav-link active");
+    currentActiveSection[0].setAttribute("class", "nav-link");
+
+    // Set section to Vaccines
+    const currentTable = document.getElementById("OrderSection");
+    currentTable.setAttribute("class", "nav-link active");
+
+    // Set title of the page to Hospital
+    document.getElementsByTagName("pageheader-component")[0].setAttribute("page-title", "Orders");
+
+    // Set endpoint of table to /hospital
+    const table = document.getElementsByTagName("table-component");
+    table[0].setAttribute("endpoint", endpoint + "/orders");
+
+    // Construct modal content to create a new vaccine
+    let createModal = /*html*/`
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Orders</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form>
+                
+                <div class="input-group mb-3">
+                    <div class="input-group-append">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="orderCompanySearch" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Choose
+                        </button>
+                        <div id="orderSearchCompany" class="dropdown-menu" aria-labelledby="orderCompanySearch">
+                            <input id="orderSearchCompanyBar" type="text" class="form-control" placeholder="Search..." onkeyup="searchBox()" autocomplete="off">
+                            <div class="dropdown-divider"></div>
+                        </div>
+                    </div>
+                    <input id="orderCompanyId" type="text" class="form-control" placeholder="Company ID" readonly hidden>
+                    <input id="orderCompany" type="text" class="form-control" placeholder="Company Name" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label for="orderTableOrderDate">Order Date*</label>
+                    <input type="date" class="form-control" id="orderTableOrderDate">
+                </div>
+
+                <div class="form-group">
+                    <label for="orderTableETA">ETA*</label>
+                    <input type="date" class="form-control" id="orderTableETA">
+                </div>
+
+            </form>
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary submit-record">Submit</button>
+            <button type="button" class="btn btn-secondary dismiss-modal" data-dismiss="modal">Close</button>
+        </div>
+    `;
+
+    // Construct modal content to create a new vaccine
+    let updateModal = /*html*/`
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Orders</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form>
+
+                <div class="custom-file">
+                    <input type="file" class="custom-file-input" id="orderFile" accept=".csv">
+                    <label class="custom-file-label" for="orderFile">Choose file</label>
+                </div>
+
+                <div class="form-group">
+                    <label for="orderTableArrived">Received On*</label>
+                    <input type="date" class="form-control" id="orderTableArrived">
+                </div>
+
+            </form>
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary submit-update-record">Submit</button>
+            <button type="button" class="btn btn-secondary dismiss-modal" data-dismiss="modal">Close</button>
+        </div>
+    `;
+
+    // Update the page header components with new modal content and function for the buttons New Record and Delete Record
+    const page_header = document.getElementsByTagName("pageheader-component");
+    page_header[0].loadFunctions( 
+        createModal, 
+        () => {
+
+            Company = document.getElementById("orderCompanyId").value;
+            OrderDate = document.getElementById("orderTableOrderDate").value;
+            ETA = document.getElementById("orderTableETA").value;
+            
+            if( Company === "" || OrderDate === "" || ETA === "" ) {
+
+                alert("You have not filled the required fields.");
+
+            } else {
+
+                const loadingIcon = document.createElement("span");
+                loadingIcon.setAttribute("class", "spinner-border spinner-border-sm");
+                loadingIcon.setAttribute("role", "status");
+                loadingIcon.setAttribute("aria-hidden", "true");
+
+                const submitButton = document.getElementsByClassName("submit-record");
+                submitButton[0].setAttribute("disabled", true);
+                submitButton[0].appendChild(loadingIcon);
+
+
+                fetch( endpoint + "/orders", {
+
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        "C_Registration": parseInt(Company),
+                        "OrderDate": OrderDate,
+                        "ETA": ETA,
+                    })
+    
+                }).then( (res) => {
+
+                    const submitButton = document.getElementsByClassName("submit-record");
+                    submitButton[0].removeAttribute("disabled");
+                    submitButton[0].removeChild(submitButton[0].lastChild);
+
+                    $('#addNewRecord').modal('hide');
+
+                })
+
+            }
+
+            
+
+        },
+        "",
+        null,
+        updateModal,
+        () => {
+
+            if( document.getElementsByTagName("table-component")[0].selected.Status === "Ordered" ) {
+
+                let submitBtn = document.getElementsByClassName("submit-update-record");
+                submitBtn[0].addEventListener("click", () => {
+
+                    const loadingIcon = document.createElement("span");
+                    loadingIcon.setAttribute("class", "spinner-border spinner-border-sm");
+                    loadingIcon.setAttribute("role", "status");
+                    loadingIcon.setAttribute("aria-hidden", "true");
+
+                    const submitButton = document.getElementsByClassName("submit-update-record");
+                    submitButton[0].setAttribute("disabled", true);
+                    submitButton[0].appendChild(loadingIcon);
+
+                    let file = document.getElementById("orderFile").files[0];
+                    let reader = new FileReader();
+
+                    reader.onload = (event) => {
+
+                        let csv = event.target.result;
+
+                        let rows = csv.split("\n");
+
+                        let data = [];
+                        for(let i=0; i<rows.length; i++) {
+                            data.push(rows[i].split("\t"));
+                        }
+
+                        let jsonData = [];
+                        
+                        let box = {
+                            B_Barcode: parseInt(data[1][0]),
+                            V_Registration: parseInt(data[1][1]),
+                            V_Barcodes: []
+                        };
+
+                        for(let i=2; i<data.length; i++) {
+                            
+                            if( data[i][0] === "" ) {
+
+                                box.V_Barcodes.push( parseInt(data[i][2]) );
+
+                            } else {
+
+                                jsonData.push(box);
+
+                                box = {
+
+                                    B_Barcode: parseInt(data[i][0]),
+                                    V_Registration: parseInt(data[i][1]),
+                                    V_Barcodes: []
+
+                                }
+
+                            }
+
+                        }
+
+                        let DateReceived = document.getElementById("orderTableArrived").value;
+
+                        console.log(document.getElementsByTagName("table-component")[0].selected.OrderID)
+
+                        fetch( endpoint + "/orders", {
+
+                            method: "PUT",
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                OrderID: parseInt(document.getElementsByTagName("table-component")[0].selected.OrderID),
+                                DateReceived: DateReceived,
+                                Boxes: jsonData
+                            })
+            
+                        }).then( (res) => {
+            
+                            const submitButton = document.getElementsByClassName("submit-update-record");
+                            submitButton[0].removeAttribute("disabled");
+                            submitButton[0].removeChild(submitButton[0].lastChild);
+            
+                            $('#updateRecord').modal('hide');
+            
+                        })
+                        
+
+                    };
+
+                    reader.readAsText(file);
+
+                });
+
+                $('#updateRecord').modal('show');
+
+            } else {
+
+                let submitBtn = document.getElementsByClassName("submit-update-record");
+                console.log(submitBtn);
+                submitBtn[0].addEventListener("click", () => {})
+
+            }
+            
+        }
+    );
+}
+
+let searchBox = () => {
+
+    let text = document.getElementById('orderSearchCompanyBar').value;
+    fetch( endpoint + '/orders/company', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            'text': text 
+        })
+    }).then((res) => {
+        return res.json();
+    }).then((data) => {
+
+        let children = document.getElementsByClassName('dropdown-item');
+
+        Array.prototype.forEach.call(children, item => document.getElementById("orderSearchCompany").removeChild(item) );
+
+        for( let i=0; i<data.length; i++ ) {
+            let a = document.createElement( 'a' );
+            a.innerHTML = data[i].Name;
+            a.href = `javascript: (() => {
+                document.getElementById("orderCompany").value = "${data[i].Name}";
+                document.getElementById("orderCompanyId").value = "${data[i].C_Registration}";
+            })()`;
+            a.setAttribute( 'class', 'dropdown-item' )
+            document.getElementById('orderSearchCompany').appendChild(a);
+        }
+
+    }).catch((err) => {
+
+        console.log(err);
+    
+    });
+
+}
+
+function loadHospital() {
+    
+    // Deactivate current section
+    const currentActiveSection = document.getElementsByClassName("nav-link active");
+    currentActiveSection[0].setAttribute("class", "nav-link");
+
+    // Set section to Vaccines
+    const currentTable = document.getElementById("HospitalSection");
+    currentTable.setAttribute("class", "nav-link active");
+
+    // Set title of the page to Hospital
+    document.getElementsByTagName("pageheader-component")[0].setAttribute("page-title", "Hospital");
+
+    // Set endpoint of table to /hospital
+    const table = document.getElementsByTagName("table-component");
+    table[0].setAttribute("endpoint", endpoint + "/hospital");
+
+    // Construct modal content to create a new vaccine
+    const createModal = /*html*/`
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Hospital</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form>
+                <div class="form-group">
+                    <label for="HospitalTableName">Hospital Name*</label>
+                    <input type="text" class="form-control" id="HospitalTableName" aria-describedby="Enter the Hospital name" placeholder="Hospital Name">
+                </div>
+                <div class="form-group">
+                    <label for="HospitalTableAddress">Hospital Address*</label>
+                    <input type="text" class="form-control" id="HospitalTableAddress" aria-describedby="Enter the hospital address" placeholder="Hospital Address">
+                </div>
+
+                <div class="form-group">
+                    <p>Please select the hospital type:<p>
+                    <input type="radio" id="public" name="HospitalType" checked value="Public">
+                    <label for="public">Public</label>
+                    <br>
+                    <input type="radio" id="private" name="HospitalType" value="Private">
+                    <label for="private">Private</label> 
+                </div>
+
+                <div class="form-group">
+                <p>Hospital offers vaccination:<p>
+                    <input type="radio" id="offers" name="HospitalOffersVacc" checked value="Yes">
+                    <label for="public">Yes</label>
+                    <br>
+                    <input type="radio" id="notoffer" name="HospitalOffersVacc" value="No">
+                    <label for="private">No</label> 
+                </div>
+            </form>
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary submit-record">Submit</button>
+            <button type="button" class="btn btn-secondary dismiss-modal" data-dismiss="modal">Close</button>
+        </div>
+    `;
+
+    // Update the page header components with new modal content and function for the buttons New Record and Delete Record
+    const page_header = document.getElementsByTagName("pageheader-component");
+    page_header[0].loadFunctions( 
+        createModal, 
+        () => {
+
+            HospitalName = document.getElementById("HospitalTableName").value;
+            HospitalAddress = document.getElementById("HospitalTableAddress").value;
+            HospitalType = document.querySelector('input[name="HospitalType"]:checked').value;
+            isVaccineOffered = document.querySelector('input[name="HospitalOffersVacc"]:checked').value;
+            
+            if( HospitalName === "" || HospitalAddress === "" ) {
+
+                alert("You have not filled the required fields.");
+
+            } else {
+
+                const loadingIcon = document.createElement("span");
+                loadingIcon.setAttribute("class", "spinner-border spinner-border-sm");
+                loadingIcon.setAttribute("role", "status");
+                loadingIcon.setAttribute("aria-hidden", "true");
+
+                const submitButton = document.getElementsByClassName("submit-record");
+                submitButton[0].setAttribute("disabled", true);
+                submitButton[0].appendChild(loadingIcon);
+
+
+                fetch( endpoint + "/hospital", {
+
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        "Name": HospitalName,
+                        "Address": HospitalAddress,
+                        "Type": HospitalType,
+                        "OffersVaccination": isVaccineOffered 
+                    })
+    
+                }).then( (res) => {
+
+                    const submitButton = document.getElementsByClassName("submit-record");
+                    submitButton[0].removeAttribute("disabled");
+                    submitButton[0].removeChild(submitButton[0].lastChild);
+
+                    $('#addNewRecord').modal('hide');
+
+                })
+
+            }
+
+            
+
+        },
+        "",
+        null
+    );
+}
+
 
 function loadVaccine() {
 
@@ -626,6 +1056,3 @@ function loadPatient() {
 
 
 window.customElements.define('sidebar-component', SideBarComponent);
-    
-    
-

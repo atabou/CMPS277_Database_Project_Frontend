@@ -9,6 +9,7 @@ class TableComponent extends HTMLElement {
 
         this.headers = [];
         this.rows = [];
+        this.selected = [];
 
         let tr = document.createElement( "tr" );
         tr.className = "t-header";
@@ -81,6 +82,22 @@ class TableComponent extends HTMLElement {
 
                 let tr = document.createElement("tr");
 
+                tr.addEventListener("click", (elem) => {
+
+                    let active = document.getElementsByClassName("table-active");
+                    Array.prototype.forEach.call( active, ( row ) => row.removeAttribute("class") );
+                    elem.target.parentElement.setAttribute("class", "table-active");
+
+                    for(let i=0; i<this.headers.length; i++) {
+                        this.selected[this.headers[i]] = elem.target.parentElement.children[i].innerHTML;
+                    }
+
+                });
+
+                tr.addEventListener("dblclick", (elem) => {
+                    this.dblClickAction();
+                });
+
                 for( let j=0; j<this.headers.length; j++ ) {
                     let td = document.createElement( "td" );
                     if (rowsPerPage*newValue + i < this.rows.length) {
@@ -102,6 +119,7 @@ class TableComponent extends HTMLElement {
 
             this.headers = [];
             this.rows = [];
+            this.selected = [];
 
             fetch( newValue, { 
 
@@ -149,6 +167,8 @@ class TableComponent extends HTMLElement {
         }
     
     }
+
+    dblClickAction() {}
 
 }
 
