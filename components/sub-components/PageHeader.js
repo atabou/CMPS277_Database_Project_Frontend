@@ -45,6 +45,15 @@ class PageHeader extends HTMLElement {
                     </div>
                 </div>
             </div>
+
+            <!-- Modal -->
+            <div class="modal fade" id="updateRecord" tabindex="-1" role="dialog" aria-labelledby="updateRecord" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div id="updateRecordModal" class="modal-content">
+                        
+                    </div>
+                </div>
+            </div>
         `;
 
 
@@ -79,7 +88,7 @@ class PageHeader extends HTMLElement {
     
     }
 
-    loadFunctions( createModal, createFn = null, deleteModal, deleteFn = null ) {
+    loadFunctions( createModal, createFn = null, deleteModal, deleteFn = null, updateModal="", updateFn=null ) {
 
         if ( createFn !== null ) {
 
@@ -131,7 +140,24 @@ class PageHeader extends HTMLElement {
 
         }
 
+        if( updateFn !== null ) {
+
+            let updateModalContent = document.getElementById("updateRecordModal");
+            updateModalContent.innerHTML = updateModal;
+
+            let table = document.getElementsByTagName("table-component");
+            table[0].dblClickAction = updateFn;
+            
+        } else {
+
+            let table = document.getElementsByTagName("table-component");
+            table[0].dblClickAction = () => {}
+
+        }
+
     }
+
+    
 
 }
 
