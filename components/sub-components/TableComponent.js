@@ -84,18 +84,22 @@ class TableComponent extends HTMLElement {
 
                 tr.addEventListener("click", (elem) => {
 
-                    let active = document.getElementsByClassName("table-active");
-                    Array.prototype.forEach.call( active, ( row ) => row.removeAttribute("class") );
-                    elem.target.parentElement.setAttribute("class", "table-active");
+                    if( elem.target.parentElement.rowIndex <= this.rows.length ) {
+                        let active = document.getElementsByClassName("table-active");
+                        Array.prototype.forEach.call( active, ( row ) => row.removeAttribute("class") );
+                        elem.target.parentElement.setAttribute("class", "table-active");
 
-                    for(let i=0; i<this.headers.length; i++) {
-                        this.selected[this.headers[i]] = elem.target.parentElement.children[i].innerHTML;
+                        for(let i=0; i<this.headers.length; i++) {
+                            this.selected[this.headers[i]] = elem.target.parentElement.children[i].innerHTML;
+                        }
                     }
 
                 });
 
                 tr.addEventListener("dblclick", (elem) => {
-                    this.dblClickAction();
+                    if( elem.target.parentElement.rowIndex <= this.rows.length ) {
+                        this.dblClickAction();
+                    }
                 });
 
                 for( let j=0; j<this.headers.length; j++ ) {
