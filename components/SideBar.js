@@ -26,6 +26,27 @@ class SideBarComponent extends HTMLElement {
                         </li>
 
                         <li class="nav-item">
+                            <a id="BoxSection" class="nav-link" href="javascript:loadBoxes();">
+                                <span data-feather="globe"></span>
+                                Boxes
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a id="StorageSection" class="nav-link" href="javascript:loadStorage();">
+                                <span data-feather="globe"></span>
+                                Storage
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a id="FridgeSection" class="nav-link" href="javascript:loadFridge();">
+                                <span data-feather="globe"></span>
+                                Fridge
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
                             <a id="OrderSection" class="nav-link" href="javascript:loadOrders();">
                                 <span data-feather="globe"></span>
                                 Orders
@@ -219,6 +240,490 @@ function loadCompany() {
 
 }
 
+function loadFridge() {
+
+    // Deactivate current section
+    const currentActiveSection = document.getElementsByClassName("nav-link active");
+    currentActiveSection[0].setAttribute("class", "nav-link");
+
+    // Set section to Vaccines
+    const currentTable = document.getElementById("FridgeSection");
+    currentTable.setAttribute("class", "nav-link active");
+
+    // Set title of the page to Hospital
+    document.getElementsByTagName("pageheader-component")[0].setAttribute("page-title", "Fridges");
+
+    // Set endpoint of table to /hospital
+    const table = document.getElementsByTagName("table-component");
+    table[0].setAttribute("endpoint", endpoint + "/fridge");
+
+    // Construct modal content to create a new vaccine
+    let createModal = /*html*/`
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Fridge</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-append">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="storageFridgeSearch" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Choose
+                        </button>
+                        <div id="storageSearchFridge" class="dropdown-menu" aria-labelledby="storageFridgeSearch">
+                            <input id="storageSearchFridgeBar" type="text" class="form-control" placeholder="Search..." onkeyup="searchBoxFridge()" autocomplete="off">
+                            <div class="dropdown-divider"></div>
+                            <div id="dpd-content"></div>
+                        </div>
+                    </div>
+                    <input id="boxStorage" type="text" class="form-control" placeholder="Hospital" readonly>
+                    <input id="boxStorageHidden" type="text" class="form-control" placeholder="Hospital" readonly hidden>
+                </div>
+
+                <div class="form-group">
+                    <label for="FridgeTemp">Operating Temperature*</label>
+                    <input type="text" class="form-control" id="FridgeTemp" placeholder="Operating Temperature">
+                </div>
+
+                <div class="form-group">
+                    <label for="FridgeCap">Capacity*</label>
+                    <input type="text" class="form-control" id="FridgeCap" placeholder="Capacity">
+                </div>
+                
+            </form>
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary submit-record">Submit</button>
+            <button type="button" class="btn btn-secondary dismiss-modal" data-dismiss="modal">Close</button>
+        </div>
+    `;
+
+    // Update the page header components with new modal content and function for the buttons New Record and Delete Record
+    const page_header = document.getElementsByTagName("pageheader-component");
+    page_header[0].loadFunctions( 
+        createModal, 
+        () => {
+
+            let temp = document.getElementById("FridgeTemp").value;
+            let cap = document.getElementById("FridgeCap").value;
+            let sId = document.getElementById("boxStorageHidden").value;
+
+            if( temp === "" || cap === "" || sId === "" ) {
+
+                alert("You have not filled the required fields.");
+
+            } else {
+
+                const loadingIcon = document.createElement("span");
+                loadingIcon.setAttribute("class", "spinner-border spinner-border-sm");
+                loadingIcon.setAttribute("role", "status");
+                loadingIcon.setAttribute("aria-hidden", "true");
+
+                const submitButton = document.getElementsByClassName("submit-record");
+                submitButton[0].setAttribute("disabled", true);
+                submitButton[0].appendChild(loadingIcon);
+
+
+                fetch( endpoint + "/fridge", {
+
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        "OperatingTemperature": temp,
+                        "Capacity": cap,
+                        "Storage_ID": sId
+                    })
+    
+                }).then( (res) => {
+
+                    const submitButton = document.getElementsByClassName("submit-record");
+                    submitButton[0].removeAttribute("disabled");
+                    submitButton[0].removeChild(submitButton[0].lastChild);
+
+                    $('#addNewRecord').modal('hide');
+
+                })
+
+            }
+
+        },
+        "",
+        null,
+        "",
+        null
+    );
+
+}
+
+let searchBoxFridge = () => {
+
+    let text = document.getElementById('storageSearchFridgeBar').value;
+    fetch( endpoint + '/fridge/storage', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            'text': text 
+        })
+    }).then((res) => {
+        return res.json();
+    }).then((data) => {
+
+        let drop = document.getElementById("dpd-content");
+        drop.innerHTML = /*html*/``;
+
+        for( let i=0; i<data.length; i++ ) {
+            let a = document.createElement( 'a' );
+            a.innerHTML = data[i].Location;
+            a.href = `javascript: (() => {
+                document.getElementById("boxStorage").value = "${data[i].Location}";
+                document.getElementById("boxStorageHidden").value = "${data[i].Storage_ID}";
+            })()`;
+            a.setAttribute( 'class', 'dropdown-item' )
+            document.getElementById('dpd-content').appendChild(a);
+        }
+
+    }).catch((err) => {
+
+        console.log(err);
+
+    });
+
+}
+
+function loadStorage() {
+
+    // Deactivate current section
+    const currentActiveSection = document.getElementsByClassName("nav-link active");
+    currentActiveSection[0].setAttribute("class", "nav-link");
+
+    // Set section to Vaccines
+    const currentTable = document.getElementById("StorageSection");
+    currentTable.setAttribute("class", "nav-link active");
+
+    // Set title of the page to Hospital
+    document.getElementsByTagName("pageheader-component")[0].setAttribute("page-title", "Storage");
+
+    // Set endpoint of table to /hospital
+    const table = document.getElementsByTagName("table-component");
+    table[0].setAttribute("endpoint", endpoint + "/storage");
+
+    // Construct modal content to create a new vaccine
+    let createModal = /*html*/`
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Storage</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-append">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="storageHospitalSearch" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Choose
+                        </button>
+                        <div id="storageSearchHospital" class="dropdown-menu" aria-labelledby="storageHospitalSearch">
+                            <input id="boxSearchHospitalBar" type="text" class="form-control" placeholder="Search..." onkeyup="searchBoxStorage()" autocomplete="off">
+                            <div class="dropdown-divider"></div>
+                            <div id="dpd-content"></div>
+                        </div>
+                    </div>
+                    <input id="boxHospital" type="text" class="form-control" placeholder="Hospital" readonly>
+                    <input id="boxHospitalHidden" type="text" class="form-control" placeholder="Hospital" readonly hidden>
+                </div>
+
+                <div class="form-group">
+                    <label for="storageLocation">Location*</label>
+                    <input type="text" class="form-control" id="storageLocation">
+                </div>
+                
+            </form>
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary submit-record">Submit</button>
+            <button type="button" class="btn btn-secondary dismiss-modal" data-dismiss="modal">Close</button>
+        </div>
+    `;
+
+    // Update the page header components with new modal content and function for the buttons New Record and Delete Record
+    const page_header = document.getElementsByTagName("pageheader-component");
+    page_header[0].loadFunctions( 
+        createModal, 
+        () => {
+
+            let Storage_Provider_ID = document.getElementById("boxHospitalHidden").value;
+            let storageLocation = CompanyLocation = document.getElementById("storageLocation").value;
+
+            if( Storage_Provider_ID === "" && storageLocation === "" ) {
+
+                alert("You have not filled the required fields.");
+
+            } else {
+
+                const loadingIcon = document.createElement("span");
+                loadingIcon.setAttribute("class", "spinner-border spinner-border-sm");
+                loadingIcon.setAttribute("role", "status");
+                loadingIcon.setAttribute("aria-hidden", "true");
+
+                const submitButton = document.getElementsByClassName("submit-record");
+                submitButton[0].setAttribute("disabled", true);
+                submitButton[0].appendChild(loadingIcon);
+
+
+                fetch( endpoint + "/storage", {
+
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        "Storage_Provider_ID": Storage_Provider_ID,
+                        "Location": storageLocation
+                    })
+    
+                }).then( (res) => {
+
+                    const submitButton = document.getElementsByClassName("submit-record");
+                    submitButton[0].removeAttribute("disabled");
+                    submitButton[0].removeChild(submitButton[0].lastChild);
+
+                    $('#addNewRecord').modal('hide');
+
+                })
+
+            }
+
+        },
+        "",
+        null,
+        "",
+        null
+    );
+
+}
+
+let searchBoxStorage = () => {
+
+    let text = document.getElementById('boxSearchHospitalBar').value;
+    fetch( endpoint + '/storage/hospitals', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            'text': text 
+        })
+    }).then((res) => {
+        return res.json();
+    }).then((data) => {
+
+        let drop = document.getElementById("dpd-content");
+        drop.innerHTML = /*html*/``;
+
+        let a = document.createElement( 'a' );
+        a.innerHTML = "Default";
+        a.href = `javascript: (() => {
+            document.getElementById("boxHospital").value = "Default";
+            document.getElementById("boxHospitalHidden").value = "1";
+        })()`;
+        a.setAttribute( 'class', 'dropdown-item' )
+        document.getElementById('dpd-content').appendChild(a);
+
+        for( let i=0; i<data.length; i++ ) {
+            let a = document.createElement( 'a' );
+            a.innerHTML = data[i].Name;
+            a.href = `javascript: (() => {
+                document.getElementById("boxHospital").value = "${data[i].Name}";
+                document.getElementById("boxHospitalHidden").value = "${data[i].Storage_Provider_ID}";
+            })()`;
+            a.setAttribute( 'class', 'dropdown-item' )
+            document.getElementById('dpd-content').appendChild(a);
+        }
+
+    }).catch((err) => {
+
+        console.log(err);
+
+    });
+
+}
+
+function loadBoxes() {
+
+        // Deactivate current section
+        const currentActiveSection = document.getElementsByClassName("nav-link active");
+        currentActiveSection[0].setAttribute("class", "nav-link");
+    
+        // Set section to Vaccines
+        const currentTable = document.getElementById("BoxSection");
+        currentTable.setAttribute("class", "nav-link active");
+    
+        // Set title of the page to Hospital
+        document.getElementsByTagName("pageheader-component")[0].setAttribute("page-title", "Boxes");
+    
+        // Set endpoint of table to /hospital
+        const table = document.getElementsByTagName("table-component");
+        table[0].setAttribute("endpoint", endpoint + "/box");
+    
+        // Construct modal content to create a new vaccine
+        let updateModal = /*html*/`
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Orders</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+
+                    <div class="input-group mb-3">
+                        <div class="input-group-append">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="boxTransferSearch" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Choose
+                            </button>
+                            <div id="boxSearchFridge" class="dropdown-menu" aria-labelledby="boxTransferSearch">
+                                <input id="boxSearchFridgeBar" type="text" class="form-control" placeholder="Search..." onkeyup="searchBoxTransfer()" autocomplete="off">
+                                <div class="dropdown-divider"></div>
+                                <div id="dpd-content"></div>
+                            </div>
+                        </div>
+                        <input id="boxFridge" type="text" class="form-control" placeholder="Fridge Barcode" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="boxTransferDate">Date Transfer*</label>
+                        <input type="date" class="form-control" id="boxTransferDate">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="boxDateArrived">Date Arrived*</label>
+                        <input type="date" class="form-control" id="boxDateArrived">
+                    </div>
+                    
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary submit-update-record">Submit</button>
+                <button type="button" class="btn btn-secondary dismiss-modal" data-dismiss="modal">Close</button>
+            </div>
+        `;
+
+        // Update the page header components with new modal content and function for the buttons New Record and Delete Record
+        const page_header = document.getElementsByTagName("pageheader-component");
+        page_header[0].loadFunctions( 
+            "", 
+            null,
+            "",
+            null,
+            updateModal,
+            () => {
+    
+                let submitBtn = document.getElementsByClassName("submit-update-record");
+                submitBtn[0].addEventListener("click", () => {
+
+                    const loadingIcon = document.createElement("span");
+                    loadingIcon.setAttribute("class", "spinner-border spinner-border-sm");
+                    loadingIcon.setAttribute("role", "status");
+                    loadingIcon.setAttribute("aria-hidden", "true");
+
+                    const submitButton = document.getElementsByClassName("submit-update-record");
+                    submitButton[0].setAttribute("disabled", true);
+                    submitButton[0].appendChild(loadingIcon);
+
+                    let boxFridge = document.getElementById("boxFridge").value;
+                    let boxTransferDate = document.getElementById("boxTransferDate").value;
+                    let boxDateArrived = document.getElementById("boxDateArrived").value;
+
+                    if( boxFridge === "" || boxTransferDate === "" || boxDateArrived === "" ) {
+
+                        alert("Please fill all the boxes");
+
+                    } else {
+
+                        fetch( endpoint + "/box", {
+
+                            method: "POST",
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                "B_Barcode": parseInt(document.getElementsByTagName("table-component")[0].selected.B_Barcode),
+                                "F_Barcode": parseInt(boxFridge),
+                                "Date_Transfered": boxTransferDate,
+                                "Date_Arrived": boxDateArrived
+                            })
+            
+                        }).then( (res) => {
+        
+                            const submitButton = document.getElementsByClassName("submit-update-record");
+                            submitButton[0].removeAttribute("disabled");
+                            submitButton[0].removeChild(submitButton[0].lastChild);
+        
+                            $('#addNewRecord').modal('hide');
+        
+                        })
+
+                    }
+
+                });
+
+                $('#updateRecord').modal('show');
+                
+            }
+        );
+
+}
+
+let searchBoxTransfer = () => {
+
+    let text = document.getElementById('boxSearchFridgeBar').value;
+    fetch( endpoint + '/box/fridge', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            'text': text 
+        })
+    }).then((res) => {
+        return res.json();
+    }).then((data) => {
+
+        let drop = document.getElementById("dpd-content");
+        drop.innerHTML = /*html*/``;
+
+        console.log(data)
+
+        for( let i=0; i<data.length; i++ ) {
+            let a = document.createElement( 'a' );
+            a.innerHTML = data[i].F_Barcode;
+            a.href = `javascript: (() => {
+                document.getElementById("boxFridge").value = "${data[i].F_Barcode}";
+            })()`;
+            a.setAttribute( 'class', 'dropdown-item' )
+            document.getElementById('dpd-content').appendChild(a);
+            // console.log(document.getElementById('dpd-content'));
+        }
+
+    }).catch((err) => {
+
+        console.log(err);
+    
+    });
+
+}
+
 function loadOrders() {
     
     // Deactivate current section
@@ -255,6 +760,7 @@ function loadOrders() {
                         <div id="orderSearchCompany" class="dropdown-menu" aria-labelledby="orderCompanySearch">
                             <input id="orderSearchCompanyBar" type="text" class="form-control" placeholder="Search..." onkeyup="searchBox()" autocomplete="off">
                             <div class="dropdown-divider"></div>
+                            <div id="dpd-content"></div>
                         </div>
                     </div>
                     <input id="orderCompanyId" type="text" class="form-control" placeholder="Company ID" readonly hidden>
@@ -488,9 +994,8 @@ let searchBox = () => {
         return res.json();
     }).then((data) => {
 
-        let children = document.getElementsByClassName('dropdown-item');
-
-        Array.prototype.forEach.call(children, item => document.getElementById("orderSearchCompany").removeChild(item) );
+        let drop = document.getElementById("dpd-content");
+        drop.innerHTML = /*html*/``;
 
         for( let i=0; i<data.length; i++ ) {
             let a = document.createElement( 'a' );
@@ -500,7 +1005,7 @@ let searchBox = () => {
                 document.getElementById("orderCompanyId").value = "${data[i].C_Registration}";
             })()`;
             a.setAttribute( 'class', 'dropdown-item' )
-            document.getElementById('orderSearchCompany').appendChild(a);
+            document.getElementById('dpd-content').appendChild(a);
         }
 
     }).catch((err) => {
