@@ -994,7 +994,7 @@ function loadBoxes() {
                         submitButton[0].removeAttribute("disabled");
                         submitButton[0].removeChild(submitButton[0].lastChild);
     
-                        $('#addNewRecord').modal('hide');
+                        $('#updateRecord').modal('hide');
 
                         document.getElementById("BoxSection").click();
     
@@ -1029,7 +1029,7 @@ let searchBoxTransfer = () => {
         let drop = document.getElementById("dpd-content");
         drop.innerHTML = /*html*/``;
 
-        console.log(data)
+        console.log(drop)
 
         for( let i=0; i<data.length; i++ ) {
             let a = document.createElement( 'a' );
