@@ -2196,7 +2196,7 @@ function loadPatient() {
             <form>
 
                 <div class="form-group">
-                    <label for="PatientTableSSN">Patient First Name *</label>
+                    <label for="PatientTableSSN">Patient SSN *</label>
                     <input type="text" class="form-control" id="PatientTableSSN" aria-describedby="Enter the Patient's SSN" placeholder="Patient SSN">
                 </div>
                 <div class="form-group">
