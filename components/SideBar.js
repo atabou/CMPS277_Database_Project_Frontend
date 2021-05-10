@@ -9,62 +9,105 @@ class SideBarComponent extends HTMLElement {
         this.innerHTML = /*html*/`
             <nav class="col-md-2 d-none d-md-block bg-light sidebar">
                 <div class="sidebar-sticky">
-                    <ul class="nav flex-column">
 
+                    <ul class="nav flex-column mb-2">
                         <li class="nav-item">
-                            <a class="nav-link active" href="#">
+                            <a id="DashboardSection" class="nav-link active" href="javascript:loadDashboard()">
                                 <span data-feather="home"></span>
                                 Dashboard
                             </a>
                         </li>
+                    </ul>
+
+                    <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+
+                        <span>Vaccinations</span>
+                    
+                    </h6>
+
+                    <ul class="nav flex-column mb-2">
 
                         <li class="nav-item">
-                            <a id="CompanySection" class="nav-link" href="javascript:loadCompany();">
-                                <span data-feather="globe"></span>
-                                Companies
+                            <a id="PatientSection" class="nav-link" href="javascript:loadPatient();">
+                                <span data-feather="users"></span>
+                                Patients
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a id="InoculationSection" class="nav-link" href="javascript:loadInoculation();">
+                                <span data-feather="shield"></span>
+                                Inoculations
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a id="SideEffectsFeltSection" class="nav-link" href="javascript:loadSideEffectsFelt();">
+                                <span data-feather="thermometer"></span>
+                                Side Effects Felt
+                            </a>
+                        </li>
+
+                    </ul>
+
+                    <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+
+                        <span>Logistics</span>
+                    
+                    </h6>
+
+                    <ul class="nav flex-column mb-2">
+
+                        <li class="nav-item">
+                            <a id="OrderSection" class="nav-link" href="javascript:loadOrders();">
+                                <span data-feather="truck"></span>
+                                Orders
                             </a>
                         </li>
 
                         <li class="nav-item">
                             <a id="BoxSection" class="nav-link" href="javascript:loadBoxes();">
-                                <span data-feather="globe"></span>
+                                <span data-feather="package"></span>
                                 Boxes
                             </a>
                         </li>
 
                         <li class="nav-item">
+                            <a id="VaccineItemSection" class="nav-link" href="javascript:loadVaccineItem();">
+                                <span data-feather="edit-2"></span>
+                                Vaccine Items
+                            </a>
+                        </li>
+
+                    </ul>
+
+
+                    <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+
+                        <span>Infrastructure</span>
+                    
+                    </h6>
+
+                    <ul class="nav flex-column mb-2">
+
+                        <li class="nav-item">
                             <a id="StorageSection" class="nav-link" href="javascript:loadStorage();">
-                                <span data-feather="globe"></span>
+                                <span data-feather="database"></span>
                                 Storage
                             </a>
                         </li>
 
                         <li class="nav-item">
                             <a id="FridgeSection" class="nav-link" href="javascript:loadFridge();">
-                                <span data-feather="globe"></span>
+                                <span data-feather="square"></span>
                                 Fridge
                             </a>
                         </li>
 
                         <li class="nav-item">
-                            <a id="OrderSection" class="nav-link" href="javascript:loadOrders();">
-                                <span data-feather="globe"></span>
-                                Orders
-                            </a>
-                        </li>
-                        
-                        <li class="nav-item">
                             <a id="HospitalSection" class="nav-link" href="javascript:loadHospital();">
                                 <span data-feather="activity"></span>
                                 Hospitals
-                            </a>
-                        </li>
-
-
-                        <li class="nav-item">
-                            <a id="VaccineSection" class="nav-link" href="javascript:loadVaccine();">
-                                <span data-feather="info"></span>
-                                Vaccines
                             </a>
                         </li>
 
@@ -75,35 +118,39 @@ class SideBarComponent extends HTMLElement {
                             </a>
                         </li>
 
-                        <li class="nav-item">
-                            <a id="PatientSection" class="nav-link" href="javascript:loadPatient();">
-                                <span data-feather="users"></span>
-                                Patients
-                            </a>
-                        </li>
-
                     </ul>
 
                     <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
 
-                        <span>Saved reports</span>
-
-                        <a class="d-flex align-items-center text-muted" href="#" aria-label="Add a new report">
-                            <span data-feather="plus-circle"></span>
-                        </a>
-                        
+                        <span>Registrations</span>
+                    
                     </h6>
 
                     <ul class="nav flex-column mb-2">
-                    
+
                         <li class="nav-item">
-                            <a class="nav-link" href="#">
-                            <span data-feather="file-text"></span>
-                            Current month
+                            <a id="CompanySection" class="nav-link" href="javascript:loadCompany();">
+                                <span data-feather="globe"></span>
+                                Companies
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a id="VaccineSection" class="nav-link" href="javascript:loadVaccine();">
+                                <span data-feather="info"></span>
+                                Vaccines
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a id="SideEffectSection" class="nav-link" href="javascript:loadSideEffect();">
+                                <span data-feather="alert-triangle"></span>
+                                Side Effects
                             </a>
                         </li>
 
                     </ul>
+
                 </div>
             </nav>
         `;
@@ -121,7 +168,41 @@ class SideBarComponent extends HTMLElement {
 
 const endpoint = "http://127.0.0.1:5000/api"
 
+function loadDashboard() {
+
+    let page = document.getElementById("main-page-components")
+    page.removeChild( page.children[page.children.length - 1] );
+    page.appendChild( document.createElement("graph-component") );
+
+    // Deactivate current section
+    const currentActiveSection = document.getElementsByClassName("nav-link active");
+    currentActiveSection[0].setAttribute("class", "nav-link");
+
+    // Set section to Companies
+    const currentTable = document.getElementById("DashboardSection");
+    currentTable.setAttribute("class", "nav-link active");
+
+    // Set title of the page to Company
+    document.getElementsByTagName("pageheader-component")[0].setAttribute("page-title", "Dashboard");
+
+    // Update the page header components with new modal content and function for the buttons New Record and Delete Record
+    const page_header = document.getElementsByTagName("pageheader-component");
+    page_header[0].loadFunctions( 
+        "", 
+        null,
+        "",
+        null,
+        "",
+        null
+    );
+
+}
+
 function loadCompany() {
+
+    let page = document.getElementById("main-page-components")
+    page.removeChild( page.children[page.children.length - 1] );
+    page.appendChild( document.createElement("table-component") );
 
     // Deactivate current section
     const currentActiveSection = document.getElementsByClassName("nav-link active");
@@ -192,7 +273,7 @@ function loadCompany() {
             CompanyName = document.getElementById("CompanyTableName").value;
             CompanyLocation = document.getElementById("CompanyTableLocation").value;
 
-            if( CompanyName === "" && CompanyLocation === "" ) {
+            if( CompanyName === "" || CompanyLocation === "" ) {
 
                 alert("You have not filled the required fields.");
 
@@ -227,11 +308,11 @@ function loadCompany() {
 
                     $('#addNewRecord').modal('hide');
 
+                    document.getElementById("CompanySection").click();
+
                 })
 
             }
-
-            
 
         },
         deleteModal,
@@ -240,7 +321,77 @@ function loadCompany() {
 
 }
 
+function loadSideEffectsFelt() {
+
+    let page = document.getElementById("main-page-components")
+    page.removeChild( page.children[page.children.length - 1] );
+    page.appendChild( document.createElement("table-component") );
+
+    // Deactivate current section
+    const currentActiveSection = document.getElementsByClassName("nav-link active");
+    currentActiveSection[0].setAttribute("class", "nav-link");
+
+    // Set section to Companies
+    const currentTable = document.getElementById("SideEffectsFeltSection");
+    currentTable.setAttribute("class", "nav-link active");
+
+    // Set title of the page to Company
+    document.getElementsByTagName("pageheader-component")[0].setAttribute("page-title", "Side Effects Felt");
+
+    // Set endpoint of table to /company
+    const table = document.getElementsByTagName("table-component");
+    table[0].setAttribute("endpoint", endpoint + "/sideeffectfelt");
+
+    // Update the page header components with new modal content and function for the buttons New Record and Delete Record
+    const page_header = document.getElementsByTagName("pageheader-component");
+    page_header[0].loadFunctions( 
+        "", 
+        null,
+        "",
+        null
+    );
+
+}
+
+function loadVaccineItem() {
+
+    let page = document.getElementById("main-page-components")
+    page.removeChild( page.children[page.children.length - 1] );
+    page.appendChild( document.createElement("table-component") );
+
+    // Deactivate current section
+    const currentActiveSection = document.getElementsByClassName("nav-link active");
+    currentActiveSection[0].setAttribute("class", "nav-link");
+
+    // Set section to Companies
+    const currentTable = document.getElementById("VaccineItemSection");
+    currentTable.setAttribute("class", "nav-link active");
+
+    // Set title of the page to Company
+    document.getElementsByTagName("pageheader-component")[0].setAttribute("page-title", "Vaccine Items");
+
+    // Set endpoint of table to /company
+    const table = document.getElementsByTagName("table-component");
+    table[0].setAttribute("endpoint", endpoint + "/vaccineitem");
+
+    // Update the page header components with new modal content and function for the buttons New Record and Delete Record
+    const page_header = document.getElementsByTagName("pageheader-component");
+    page_header[0].loadFunctions( 
+        "", 
+        null,
+        "",
+        null,
+        "",
+        null
+    );
+
+}
+
 function loadFridge() {
+
+    let page = document.getElementById("main-page-components")
+    page.removeChild( page.children[page.children.length - 1] );
+    page.appendChild( document.createElement("table-component") );
 
     // Deactivate current section
     const currentActiveSection = document.getElementsByClassName("nav-link active");
@@ -348,6 +499,8 @@ function loadFridge() {
 
                     $('#addNewRecord').modal('hide');
 
+                    document.getElementById("FridgeSection").click();
+
                 })
 
             }
@@ -398,7 +551,172 @@ let searchBoxFridge = () => {
 
 }
 
+function loadSideEffect() {
+
+    let page = document.getElementById("main-page-components")
+    page.removeChild( page.children[page.children.length - 1] );
+    page.appendChild( document.createElement("table-component") );
+
+    // Deactivate current section
+    const currentActiveSection = document.getElementsByClassName("nav-link active");
+    currentActiveSection[0].setAttribute("class", "nav-link");
+
+    // Set section to Vaccines
+    const currentTable = document.getElementById("SideEffectSection");
+    currentTable.setAttribute("class", "nav-link active");
+
+    // Set title of the page to Hospital
+    document.getElementsByTagName("pageheader-component")[0].setAttribute("page-title", "Side Effects");
+
+    // Set endpoint of table to /hospital
+    const table = document.getElementsByTagName("table-component");
+    table[0].setAttribute("endpoint", endpoint + "/sideeffect");
+
+    // Construct modal content to create a new vaccine
+    let createModal = /*html*/`
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Side Effects</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-append">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="sideVacSearch" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Choose
+                        </button>
+                        <div id="sideSearchVac" class="dropdown-menu" aria-labelledby="sideVacSearch">
+                            <input id="sideSearchVacBar" type="text" class="form-control" placeholder="Search..." onkeyup="searchSideEffect()" autocomplete="off">
+                            <div class="dropdown-divider"></div>
+                            <div id="dpd-content"></div>
+                        </div>
+                    </div>
+                    <input id="sideEffectVac" type="text" class="form-control" placeholder="Vaccine" readonly>
+                    <input id="sideEffectVacHidden" type="text" class="form-control" placeholder="Vaccine" readonly hidden>
+                </div>
+
+                <div class="form-group">
+                    <label for="SideName">Side Effect Name*</label>
+                    <input type="text" class="form-control" id="SideName" placeholder="Side Effect Name">
+                </div>
+                
+            </form>
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary submit-record">Submit</button>
+            <button type="button" class="btn btn-secondary dismiss-modal" data-dismiss="modal">Close</button>
+        </div>
+    `;
+
+    // Update the page header components with new modal content and function for the buttons New Record and Delete Record
+    const page_header = document.getElementsByTagName("pageheader-component");
+    page_header[0].loadFunctions( 
+        createModal, 
+        () => {
+
+            let name = document.getElementById("SideName").value;
+            let vac = document.getElementById("sideEffectVacHidden").value;
+            
+            if( name === "" || vac === "" ) {
+
+                alert("You have not filled the required fields.");
+
+            } else {
+
+                const loadingIcon = document.createElement("span");
+                loadingIcon.setAttribute("class", "spinner-border spinner-border-sm");
+                loadingIcon.setAttribute("role", "status");
+                loadingIcon.setAttribute("aria-hidden", "true");
+
+                const submitButton = document.getElementsByClassName("submit-record");
+                submitButton[0].setAttribute("disabled", true);
+                submitButton[0].appendChild(loadingIcon);
+
+
+                fetch( endpoint + "/sideeffect", {
+
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        "Name": name,
+                        "V_Registration": vac
+                    })
+    
+                }).then( (res) => {
+
+                    const submitButton = document.getElementsByClassName("submit-record");
+                    submitButton[0].removeAttribute("disabled");
+                    submitButton[0].removeChild(submitButton[0].lastChild);
+
+                    $('#addNewRecord').modal('hide');
+
+                    document.getElementById("SideEffectSection").click();
+
+                })
+
+            }
+
+        },
+        "",
+        null,
+        "",
+        null
+    );
+
+}
+
+let searchSideEffect = () => {
+
+    let page = document.getElementById("main-page-components")
+    page.removeChild( page.children[page.children.length - 1] );
+    page.appendChild( document.createElement("table-component") );
+
+    let text = document.getElementById('sideSearchVacBar').value;
+    fetch( endpoint + '/sideeffect/vaccine', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            'text': text 
+        })
+    }).then((res) => {
+        return res.json();
+    }).then((data) => {
+
+        let drop = document.getElementById("dpd-content");
+        drop.innerHTML = /*html*/``;
+
+        for( let i=0; i<data.length; i++ ) {
+            let a = document.createElement( 'a' );
+            a.innerHTML = data[i].Name;
+            a.href = `javascript: (() => {
+                document.getElementById("sideEffectVac").value = "${data[i].Name}";
+                document.getElementById("sideEffectVacHidden").value = "${data[i].V_Registration}";
+            })()`;
+            a.setAttribute( 'class', 'dropdown-item' )
+            document.getElementById('dpd-content').appendChild(a);
+        }
+
+    }).catch((err) => {
+
+        console.log(err);
+
+    });
+
+}
+
 function loadStorage() {
+
+    let page = document.getElementById("main-page-components")
+    page.removeChild( page.children[page.children.length - 1] );
+    page.appendChild( document.createElement("table-component") );
 
     // Deactivate current section
     const currentActiveSection = document.getElementsByClassName("nav-link active");
@@ -464,7 +782,7 @@ function loadStorage() {
             let Storage_Provider_ID = document.getElementById("boxHospitalHidden").value;
             let storageLocation = CompanyLocation = document.getElementById("storageLocation").value;
 
-            if( Storage_Provider_ID === "" && storageLocation === "" ) {
+            if( Storage_Provider_ID === "" || storageLocation === "" ) {
 
                 alert("You have not filled the required fields.");
 
@@ -498,6 +816,8 @@ function loadStorage() {
                     submitButton[0].removeChild(submitButton[0].lastChild);
 
                     $('#addNewRecord').modal('hide');
+
+                    document.getElementById("StorageSection").click();
 
                 })
 
@@ -560,128 +880,134 @@ let searchBoxStorage = () => {
 
 function loadBoxes() {
 
-        // Deactivate current section
-        const currentActiveSection = document.getElementsByClassName("nav-link active");
-        currentActiveSection[0].setAttribute("class", "nav-link");
-    
-        // Set section to Vaccines
-        const currentTable = document.getElementById("BoxSection");
-        currentTable.setAttribute("class", "nav-link active");
-    
-        // Set title of the page to Hospital
-        document.getElementsByTagName("pageheader-component")[0].setAttribute("page-title", "Boxes");
-    
-        // Set endpoint of table to /hospital
-        const table = document.getElementsByTagName("table-component");
-        table[0].setAttribute("endpoint", endpoint + "/box");
-    
-        // Construct modal content to create a new vaccine
-        let updateModal = /*html*/`
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Orders</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form>
+    let page = document.getElementById("main-page-components")
+    page.removeChild( page.children[page.children.length - 1] );
+    page.appendChild( document.createElement("table-component") );
 
-                    <div class="input-group mb-3">
-                        <div class="input-group-append">
-                            <button class="btn btn-secondary dropdown-toggle" type="button" id="boxTransferSearch" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Choose
-                            </button>
-                            <div id="boxSearchFridge" class="dropdown-menu" aria-labelledby="boxTransferSearch">
-                                <input id="boxSearchFridgeBar" type="text" class="form-control" placeholder="Search..." onkeyup="searchBoxTransfer()" autocomplete="off">
-                                <div class="dropdown-divider"></div>
-                                <div id="dpd-content"></div>
-                            </div>
+    // Deactivate current section
+    const currentActiveSection = document.getElementsByClassName("nav-link active");
+    currentActiveSection[0].setAttribute("class", "nav-link");
+
+    // Set section to Vaccines
+    const currentTable = document.getElementById("BoxSection");
+    currentTable.setAttribute("class", "nav-link active");
+
+    // Set title of the page to Hospital
+    document.getElementsByTagName("pageheader-component")[0].setAttribute("page-title", "Boxes");
+
+    // Set endpoint of table to /hospital
+    const table = document.getElementsByTagName("table-component");
+    table[0].setAttribute("endpoint", endpoint + "/box");
+
+    // Construct modal content to create a new vaccine
+    let updateModal = /*html*/`
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Orders</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-append">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="boxTransferSearch" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Choose
+                        </button>
+                        <div id="boxSearchFridge" class="dropdown-menu" aria-labelledby="boxTransferSearch">
+                            <input id="boxSearchFridgeBar" type="text" class="form-control" placeholder="Search..." onkeyup="searchBoxTransfer()" autocomplete="off">
+                            <div class="dropdown-divider"></div>
+                            <div id="dpd-content"></div>
                         </div>
-                        <input id="boxFridge" type="text" class="form-control" placeholder="Fridge Barcode" readonly>
                     </div>
+                    <input id="boxFridge" type="text" class="form-control" placeholder="Fridge Barcode" readonly>
+                </div>
 
-                    <div class="form-group">
-                        <label for="boxTransferDate">Date Transfer*</label>
-                        <input type="date" class="form-control" id="boxTransferDate">
-                    </div>
+                <div class="form-group">
+                    <label for="boxTransferDate">Date Transfer*</label>
+                    <input type="date" class="form-control" id="boxTransferDate">
+                </div>
 
-                    <div class="form-group">
-                        <label for="boxDateArrived">Date Arrived*</label>
-                        <input type="date" class="form-control" id="boxDateArrived">
-                    </div>
-                    
-                </form>
-            </div>
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary submit-update-record">Submit</button>
-                <button type="button" class="btn btn-secondary dismiss-modal" data-dismiss="modal">Close</button>
-            </div>
-        `;
-
-        // Update the page header components with new modal content and function for the buttons New Record and Delete Record
-        const page_header = document.getElementsByTagName("pageheader-component");
-        page_header[0].loadFunctions( 
-            "", 
-            null,
-            "",
-            null,
-            updateModal,
-            () => {
-    
-                let submitBtn = document.getElementsByClassName("submit-update-record");
-                submitBtn[0].addEventListener("click", () => {
-
-                    const loadingIcon = document.createElement("span");
-                    loadingIcon.setAttribute("class", "spinner-border spinner-border-sm");
-                    loadingIcon.setAttribute("role", "status");
-                    loadingIcon.setAttribute("aria-hidden", "true");
-
-                    const submitButton = document.getElementsByClassName("submit-update-record");
-                    submitButton[0].setAttribute("disabled", true);
-                    submitButton[0].appendChild(loadingIcon);
-
-                    let boxFridge = document.getElementById("boxFridge").value;
-                    let boxTransferDate = document.getElementById("boxTransferDate").value;
-                    let boxDateArrived = document.getElementById("boxDateArrived").value;
-
-                    if( boxFridge === "" || boxTransferDate === "" || boxDateArrived === "" ) {
-
-                        alert("Please fill all the boxes");
-
-                    } else {
-
-                        fetch( endpoint + "/box", {
-
-                            method: "POST",
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                "B_Barcode": parseInt(document.getElementsByTagName("table-component")[0].selected.B_Barcode),
-                                "F_Barcode": parseInt(boxFridge),
-                                "Date_Transfered": boxTransferDate,
-                                "Date_Arrived": boxDateArrived
-                            })
-            
-                        }).then( (res) => {
-        
-                            const submitButton = document.getElementsByClassName("submit-update-record");
-                            submitButton[0].removeAttribute("disabled");
-                            submitButton[0].removeChild(submitButton[0].lastChild);
-        
-                            $('#addNewRecord').modal('hide');
-        
-                        })
-
-                    }
-
-                });
-
-                $('#updateRecord').modal('show');
+                <div class="form-group">
+                    <label for="boxDateArrived">Date Arrived*</label>
+                    <input type="date" class="form-control" id="boxDateArrived">
+                </div>
                 
-            }
-        );
+            </form>
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary submit-update-record">Submit</button>
+            <button type="button" class="btn btn-secondary dismiss-modal" data-dismiss="modal">Close</button>
+        </div>
+    `;
+
+    // Update the page header components with new modal content and function for the buttons New Record and Delete Record
+    const page_header = document.getElementsByTagName("pageheader-component");
+    page_header[0].loadFunctions( 
+        "", 
+        null,
+        "",
+        null,
+        updateModal,
+        () => {
+
+            let submitBtn = document.getElementsByClassName("submit-update-record");
+            submitBtn[0].addEventListener("click", () => {
+
+                const loadingIcon = document.createElement("span");
+                loadingIcon.setAttribute("class", "spinner-border spinner-border-sm");
+                loadingIcon.setAttribute("role", "status");
+                loadingIcon.setAttribute("aria-hidden", "true");
+
+                const submitButton = document.getElementsByClassName("submit-update-record");
+                submitButton[0].setAttribute("disabled", true);
+                submitButton[0].appendChild(loadingIcon);
+
+                let boxFridge = document.getElementById("boxFridge").value;
+                let boxTransferDate = document.getElementById("boxTransferDate").value;
+                let boxDateArrived = document.getElementById("boxDateArrived").value;
+
+                if( boxFridge === "" || boxTransferDate === "" || boxDateArrived === "" ) {
+
+                    alert("Please fill all the boxes");
+
+                } else {
+
+                    fetch( endpoint + "/box", {
+
+                        method: "POST",
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            "B_Barcode": parseInt(document.getElementsByTagName("table-component")[0].selected.B_Barcode),
+                            "F_Barcode": parseInt(boxFridge),
+                            "Date_Transfered": boxTransferDate,
+                            "Date_Arrived": boxDateArrived
+                        })
+        
+                    }).then( (res) => {
+    
+                        const submitButton = document.getElementsByClassName("submit-update-record");
+                        submitButton[0].removeAttribute("disabled");
+                        submitButton[0].removeChild(submitButton[0].lastChild);
+    
+                        $('#addNewRecord').modal('hide');
+
+                        document.getElementById("BoxSection").click();
+    
+                    })
+
+                }
+
+            });
+
+            $('#updateRecord').modal('show');
+            
+        }
+    );
 
 }
 
@@ -724,8 +1050,407 @@ let searchBoxTransfer = () => {
 
 }
 
+function loadInoculation() {
+    
+    let page = document.getElementById("main-page-components")
+    page.removeChild( page.children[page.children.length - 1] );
+    page.appendChild( document.createElement("table-component") );
+
+    // Deactivate current section
+    const currentActiveSection = document.getElementsByClassName("nav-link active");
+    currentActiveSection[0].setAttribute("class", "nav-link");
+
+    // Set section to Vaccines
+    const currentTable = document.getElementById("InoculationSection");
+    currentTable.setAttribute("class", "nav-link active");
+
+    // Set title of the page to Hospital
+    document.getElementsByTagName("pageheader-component")[0].setAttribute("page-title", "Inoculations");
+
+    // Set endpoint of table to /hospital
+    const table = document.getElementsByTagName("table-component");
+    table[0].setAttribute("endpoint", endpoint + "/inoculation");
+
+    // Construct modal content to create a new vaccine
+    let createModal = /*html*/`
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Orders</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form>
+                
+                <div class="input-group mb-3">
+                    <div class="input-group-append">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="inoculationPatientSearch" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Choose
+                        </button>
+                        <div id="inoculationSearchPatient" class="dropdown-menu" aria-labelledby="inoculationPatientSearch">
+                            <input id="inoculationSearchPatientBar" type="text" class="form-control" placeholder="Search..." onkeyup="searchInoculationPatient()" autocomplete="off">
+                            <div class="dropdown-divider"></div>
+                            <div id="dpd-content-0"></div>
+                        </div>
+                    </div>
+                    <input id="inoculationPatient" type="text" class="form-control" placeholder="Patient SSN" readonly>
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-append">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="inoculationDoctorSearch" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Choose
+                        </button>
+                        <div id="inoculationSearchDoctor" class="dropdown-menu" aria-labelledby="inoculationDoctorSearch">
+                            <input id="inoculationSearchDoctorBar" type="text" class="form-control" placeholder="Search..." onkeyup="searchInoculationDoctor()" autocomplete="off">
+                            <div class="dropdown-divider"></div>
+                            <div id="dpd-content-1"></div>
+                        </div>
+                    </div>
+                    <input id="inoculationDoctor" type="text" class="form-control" placeholder="Doctor Registration ID" readonly>
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-append">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="inoculationVacSearch" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Choose
+                        </button>
+                        <div id="inoculationSearchVac" class="dropdown-menu" aria-labelledby="inoculationVacSearch">
+                            <input id="inoculationSearchVacBar" type="text" class="form-control" placeholder="Search..." onkeyup="searchInoculationVac()" autocomplete="off">
+                            <div class="dropdown-divider"></div>
+                            <div id="dpd-content-2"></div>
+                        </div>
+                    </div>
+                    <input id="inoculationVac" type="text" class="form-control" placeholder="Vaccine Barcode" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label for="inoculationDate">Inoculation Date*</label>
+                    <input type="date" class="form-control" id="inoculationDate">
+                </div>
+
+            </form>
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary submit-record">Submit</button>
+            <button type="button" class="btn btn-secondary dismiss-modal" data-dismiss="modal">Close</button>
+        </div>
+    `;
+
+    // Construct modal content to create a new vaccine
+    let updateModal = /*html*/`
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Orders</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-append">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="inoculationSideSearch" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Choose
+                        </button>
+                        <div id="inoculationSearchSide" class="dropdown-menu" aria-labelledby="inoculationSideSearch">
+                            <input id="inoculationSearchSideBar" type="text" class="form-control" placeholder="Search..." onkeyup="searchInoculationSide()" autocomplete="off">
+                            <div class="dropdown-divider"></div>
+                            <div id="dpd-content-4"></div>
+                        </div>
+                    </div>
+                    <input id="inoculationSide" type="text" class="form-control" placeholder="Side Effect" readonly>
+                    <input id="inoculationSideHidden" type="text" class="form-control" placeholder="Side Effect" readonly hidden>
+                </div>
+
+            </form>
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary submit-update-record">Submit</button>
+            <button type="button" class="btn btn-secondary dismiss-modal" data-dismiss="modal">Close</button>
+        </div>
+    `;
+
+    // Update the page header components with new modal content and function for the buttons New Record and Delete Record
+    const page_header = document.getElementsByTagName("pageheader-component");
+    page_header[0].loadFunctions( 
+        createModal, 
+        () => {
+
+            let Patient = document.getElementById("inoculationPatient").value;
+            let Doctor = document.getElementById("inoculationDoctor").value;
+            let Vac = document.getElementById("inoculationVac").value;
+            let inocDate = document.getElementById("inoculationDate").value;
+            
+            if( Patient === "" || Doctor === "" || Vac === "" || inocDate === "" ) {
+
+                alert("You have not filled the required fields.");
+
+            } else {
+
+                const loadingIcon = document.createElement("span");
+                loadingIcon.setAttribute("class", "spinner-border spinner-border-sm");
+                loadingIcon.setAttribute("role", "status");
+                loadingIcon.setAttribute("aria-hidden", "true");
+
+                const submitButton = document.getElementsByClassName("submit-record");
+                submitButton[0].setAttribute("disabled", true);
+                submitButton[0].appendChild(loadingIcon);
+
+
+                fetch( endpoint + "/inoculation", {
+
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        "Patient": Patient,
+                        "Doctor": Doctor,
+                        "Vaccine": Vac,
+                        "Date": inocDate
+                    })
+    
+                }).then( (res) => {
+
+                    const submitButton = document.getElementsByClassName("submit-record");
+                    submitButton[0].removeAttribute("disabled");
+                    submitButton[0].removeChild(submitButton[0].lastChild);
+
+                    $('#addNewRecord').modal('hide');
+
+                    document.getElementById("InoculationSection").click();
+
+                })
+
+            }
+
+            
+
+        },
+        "",
+        null,
+        updateModal,
+        () => {
+
+            let submitBtn = document.getElementsByClassName("submit-update-record");
+            submitBtn[0].addEventListener("click", () => {
+
+                let Patient = document.getElementsByTagName("table-component")[0].selected.SSN;
+                let Doctor = document.getElementsByTagName("table-component")[0].selected.DoctorRegistration;
+                let Vac = document.getElementsByTagName("table-component")[0].selected.VaccineBarcode;
+                let inocDate =  new Date(document.getElementsByTagName("table-component")[0].selected.Date);
+                let side = document.getElementById("inoculationSideHidden").value;
+
+                inocDate = inocDate.getFullYear() + "-" + (inocDate.getMonth() + 1) + '-' + inocDate.getDate();
+
+                if( side === "" ) {
+
+                    alert("You have not filled the required fields.");
+    
+                } else {
+
+                    const loadingIcon = document.createElement("span");
+                    loadingIcon.setAttribute("class", "spinner-border spinner-border-sm");
+                    loadingIcon.setAttribute("role", "status");
+                    loadingIcon.setAttribute("aria-hidden", "true");
+
+                    const submitButton = document.getElementsByClassName("submit-update-record");
+                    submitButton[0].setAttribute("disabled", true);
+                    submitButton[0].appendChild(loadingIcon);
+                    
+                    fetch( endpoint + "/sideeffectfelt", {
+
+                        method: "POST",
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            "Patient": parseInt(Patient),
+                            "Doctor": parseInt(Doctor),
+                            "Vaccine": parseInt(Vac),
+                            "Date": inocDate,
+                            "Side_Effect_ID": parseInt(side)
+                        })
+        
+                    }).then( (res) => {
+        
+                        const submitButton = document.getElementsByClassName("submit-update-record");
+                        submitButton[0].removeAttribute("disabled");
+                        submitButton[0].removeChild(submitButton[0].lastChild);
+        
+                        $('#updateRecord').modal('hide');
+
+                        document.getElementById("InoculationSection").click();
+        
+                    })
+
+                }
+                    
+            });
+
+            $('#updateRecord').modal('show');
+            
+        }
+    );
+}
+
+let searchInoculationSide = () => {
+
+    
+    let text = document.getElementById('inoculationSearchSideBar').value;
+    fetch( endpoint + '/inoculation/sideeffect', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            'text': text,
+            'B_Barcode': document.getElementsByTagName("table-component")[0].selected.BoxBarcode
+        })
+    }).then((res) => {
+        return res.json();
+    }).then((data) => {
+
+        let drop = document.getElementById("dpd-content-4");
+        drop.innerHTML = /*html*/``;
+
+        for( let i=0; i<data.length; i++ ) {
+            let a = document.createElement( 'a' );
+            a.innerHTML = data[i].Name;
+            a.href = `javascript: (() => {
+                document.getElementById("inoculationSide").value = "${data[i].Name}";
+                document.getElementById("inoculationSideHidden").value = "${data[i].Side_Effect_ID}";
+            })()`;
+            a.setAttribute( 'class', 'dropdown-item' )
+            document.getElementById('dpd-content-4').appendChild(a);
+        }
+
+    }).catch((err) => {
+
+        console.log(err);
+    
+    });
+
+}
+
+let searchInoculationPatient = () => {
+
+    let text = document.getElementById('inoculationSearchPatientBar').value;
+    fetch( endpoint + '/inoculation/patient', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            'text': text 
+        })
+    }).then((res) => {
+        return res.json();
+    }).then((data) => {
+
+        let drop = document.getElementById("dpd-content-0");
+        drop.innerHTML = /*html*/``;
+
+        for( let i=0; i<data.length; i++ ) {
+            let a = document.createElement( 'a' );
+            a.innerHTML = data[i].SSN;
+            a.href = `javascript: (() => {
+                document.getElementById("inoculationPatient").value = "${data[i].SSN}";
+            })()`;
+            a.setAttribute( 'class', 'dropdown-item' )
+            document.getElementById('dpd-content-0').appendChild(a);
+        }
+
+    }).catch((err) => {
+
+        console.log(err);
+    
+    });
+
+}
+
+let searchInoculationDoctor = () => {
+
+    let text = document.getElementById('inoculationSearchDoctorBar').value;
+    fetch( endpoint + '/inoculation/doctor', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            'text': text 
+        })
+    }).then((res) => {
+        return res.json();
+    }).then((data) => {
+
+        let drop = document.getElementById("dpd-content-1");
+        drop.innerHTML = /*html*/``;
+
+        for( let i=0; i<data.length; i++ ) {
+            let a = document.createElement( 'a' );
+            a.innerHTML = data[i].D_Registration;
+            a.href = `javascript: (() => {
+                document.getElementById("inoculationDoctor").value = "${data[i].D_Registration}";
+            })()`;
+            a.setAttribute( 'class', 'dropdown-item' )
+            document.getElementById('dpd-content-1').appendChild(a);
+        }
+
+    }).catch((err) => {
+
+        console.log(err);
+    
+    });
+
+}
+
+let searchInoculationVac = () => {
+
+    let text = document.getElementById('inoculationSearchVacBar').value;
+    fetch( endpoint + '/inoculation/vaccineitem', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            'text': text 
+        })
+    }).then((res) => {
+        return res.json();
+    }).then((data) => {
+
+        let drop = document.getElementById("dpd-content-2");
+        drop.innerHTML = /*html*/``;
+
+        for( let i=0; i<data.length; i++ ) {
+            let a = document.createElement( 'a' );
+            a.innerHTML = data[i].V_Barcode;
+            a.href = `javascript: (() => {
+                document.getElementById("inoculationVac").value = "${data[i].V_Barcode}";
+            })()`;
+            a.setAttribute( 'class', 'dropdown-item' )
+            document.getElementById('dpd-content-2').appendChild(a);
+        }
+
+    }).catch((err) => {
+
+        console.log(err);
+    
+    });
+
+}
+
+
 function loadOrders() {
     
+    let page = document.getElementById("main-page-components")
+    page.removeChild( page.children[page.children.length - 1] );
+    page.appendChild( document.createElement("table-component") );
+
     // Deactivate current section
     const currentActiveSection = document.getElementsByClassName("nav-link active");
     currentActiveSection[0].setAttribute("class", "nav-link");
@@ -862,6 +1587,8 @@ function loadOrders() {
 
                     $('#addNewRecord').modal('hide');
 
+                    document.getElementById("OrderSection").click();
+
                 })
 
             }
@@ -955,6 +1682,8 @@ function loadOrders() {
                             submitButton[0].removeChild(submitButton[0].lastChild);
             
                             $('#updateRecord').modal('hide');
+
+                            document.getElementById("OrderSection").click();
             
                         })
                         
@@ -1018,6 +1747,10 @@ let searchBox = () => {
 
 function loadHospital() {
     
+    let page = document.getElementById("main-page-components")
+    page.removeChild( page.children[page.children.length - 1] );
+    page.appendChild( document.createElement("table-component") );
+
     // Deactivate current section
     const currentActiveSection = document.getElementsByClassName("nav-link active");
     currentActiveSection[0].setAttribute("class", "nav-link");
@@ -1126,6 +1859,8 @@ function loadHospital() {
 
                     $('#addNewRecord').modal('hide');
 
+                    document.getElementById("HospitalSection").click();
+
                 })
 
             }
@@ -1140,6 +1875,10 @@ function loadHospital() {
 
 
 function loadVaccine() {
+
+    let page = document.getElementById("main-page-components")
+    page.removeChild( page.children[page.children.length - 1] );
+    page.appendChild( document.createElement("table-component") );
 
     // Deactivate current section
     const currentActiveSection = document.getElementsByClassName("nav-link active");
@@ -1230,8 +1969,8 @@ function loadVaccine() {
             VaccineDosesRequired = document.getElementById("VaccineTableDosesRequired").value;
             VaccineTimeSeperation = document.getElementById("VaccineTableTimeSeperation").value;
 
-            if( VaccineName === "" && VaccineDescription === "" && VaccineStorageTemp === ""
-            && VaccineShelfLife === "" && VaccineDosesRequired === "" && VaccineTimeSeperation === "") {
+            if( VaccineName === "" || VaccineDescription === "" || VaccineStorageTemp === ""
+            || VaccineShelfLife === "" || VaccineDosesRequired === "" || VaccineTimeSeperation === "") {
 
                 alert("You have not filled the required fields.");
 
@@ -1270,6 +2009,8 @@ function loadVaccine() {
 
                     $('#addNewRecord').modal('hide');
 
+                    document.getElementById("VaccineSection").click();
+
                 })
 
             }
@@ -1285,6 +2026,10 @@ function loadVaccine() {
 
 
 function loadDoctor() {
+
+    let page = document.getElementById("main-page-components")
+    page.removeChild( page.children[page.children.length - 1] );
+    page.appendChild( document.createElement("table-component") );
 
     // Deactivate current section
     const currentActiveSection = document.getElementsByClassName("nav-link active");
@@ -1365,7 +2110,7 @@ function loadDoctor() {
             DoctorAddress = document.getElementById("DoctorTableAddress").value;
             DoctorSpecialty = document.getElementById("DoctorTableSpecialty").value;
 
-            if( DoctorFirstName === "" && DoctorLastName === ""  && DoctorAddress === "" && DoctorSpecialty === "") {
+            if( DoctorFirstName === "" || DoctorLastName === ""  || DoctorAddress === "" || DoctorSpecialty === "") {
 
                 alert("You have not filled the required fields.");
 
@@ -1402,6 +2147,8 @@ function loadDoctor() {
 
                     $('#addNewRecord').modal('hide');
 
+                    document.getElementById("DoctorSection").click();
+
                 })
 
             }
@@ -1417,6 +2164,10 @@ function loadDoctor() {
 
 
 function loadPatient() {
+
+    let page = document.getElementById("main-page-components")
+    page.removeChild( page.children[page.children.length - 1] );
+    page.appendChild( document.createElement("table-component") );
 
     // Deactivate current section
     const currentActiveSection = document.getElementsByClassName("nav-link active");
@@ -1443,6 +2194,11 @@ function loadPatient() {
         </div>
         <div class="modal-body">
             <form>
+
+                <div class="form-group">
+                    <label for="PatientTableSSN">Patient First Name *</label>
+                    <input type="text" class="form-control" id="PatientTableSSN" aria-describedby="Enter the Patient's SSN" placeholder="Patient SSN">
+                </div>
                 <div class="form-group">
                     <label for="PatientTableFirstName">Patient First Name *</label>
                     <input type="text" class="form-control" id="PatientTableFirstName" aria-describedby="Enter the Patient's first name" placeholder="Patient First Name">
@@ -1465,7 +2221,7 @@ function loadPatient() {
                 </div>
                 <div class="form-group">
                     <label for="PatientTablePhoneNumber">Patient Phone Number *</label>
-                    <input type="text" class="form-control" id="PatientPhoneNumber" aria-describedby="Enter the Patient's phone number" placeholder="Patient Phone Number">
+                    <input type="text" class="form-control" id="PatientTablePhoneNumber" aria-describedby="Enter the Patient's phone number" placeholder="Patient Phone Number">
                 </div>
             </form>
         </div>
@@ -1500,6 +2256,7 @@ function loadPatient() {
         createModal, 
         () => {
 
+            PatientSSN = document.getElementById("PatientTableSSN").value;
             PatientFirstName = document.getElementById("PatientTableFirstName").value;
             PatientLastName = document.getElementById("PatientTableLastName").value;
             PatientBirthDate = document.getElementById("PatientTableBirthDate").value;
@@ -1507,7 +2264,7 @@ function loadPatient() {
             PatientAddress = document.getElementById("PatientTableAddress").value;
             PatientPhoneNumber = document.getElementById("PatientTablePhoneNumber").value;
 
-            if( PatientFirstName === "" && PatientLastName === "" && PatientSS_Status === "" && PatientAddress === "" && PatientPhoneNumber === "") {
+            if( PatientFirstName === "" || PatientLastName === "" || PatientSS_Status === "" || PatientAddress === "" || PatientPhoneNumber === "") {
 
                 alert("You have not filled the required fields.");
 
@@ -1530,6 +2287,7 @@ function loadPatient() {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
+                        "SSN": PatientSSN,
                         "FirstName": PatientFirstName,
                         "LastName": PatientLastName,
                         "BirthDate": PatientBirthDate,
@@ -1545,6 +2303,8 @@ function loadPatient() {
                     submitButton[0].removeChild(submitButton[0].lastChild);
 
                     $('#addNewRecord').modal('hide');
+
+                    document.getElementById("PatientSection").click();
 
                 })
 

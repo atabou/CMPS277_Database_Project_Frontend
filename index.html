@@ -25,8 +25,8 @@
         <link rel="icon" href="https://getbootstrap.com/docs/4.4/assets/img/favicons/favicon.ico">
         <meta name="msapplication-config" content="https://getbootstrap.com/docs/4.4/assets/img/favicons/browserconfig.xml">
         <meta name="theme-color" content="#563d7c">
-
-
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+        
         <style>
 
             .bd-placeholder-img {
@@ -65,13 +65,12 @@
                 <!-- Left Side Bar -->
                 <sidebar-component></sidebar-component>
 
-                <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+                <main id="main-page-components" role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
                     
                     <!-- Page Header -->
                     <pageheader-component page-title="Dashboard"></pageheader-component>
 
-                    <!-- Table -->
-                    <table-component></table-component>
+                    <graph-component></graph-component>
 
                 </main>
             </div>
@@ -88,6 +87,7 @@
         <script src="./components/sub-components/PageHeader.js"></script>
         <script src="./components/sub-components/TableComponent.js"></script>
         <script src="./components/sub-components/PaginationComponent.js"></script>
+        <script src="./components/sub-components/GraphComponent.js"></script>
 
 
     </body>

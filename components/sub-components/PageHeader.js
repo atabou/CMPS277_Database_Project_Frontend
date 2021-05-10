@@ -12,16 +12,6 @@ class PageHeader extends HTMLElement {
                     <button type="button" class="btn btn-success mr-1 create-record" data-toggle="modal" data-target="#addNewRecord">New Record</button>
 
                     <button type="button" class="btn btn-danger mr-2 delete-record" data-toggle="modal" data-target="#deleteRecord">Delete Record</button>
-
-                    <div class="btn-group mr-2">
-                        <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
-                    </div>
-
-                    <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle">
-                        <span data-feather="calendar"></span>
-                        This week
-                    </button>
                     
                 </div>
 
@@ -148,7 +138,7 @@ class PageHeader extends HTMLElement {
             let table = document.getElementsByTagName("table-component");
             table[0].dblClickAction = updateFn;
             
-        } else {
+        } else if( document.getElementsByTagName("table-component").length != 0 ) {
 
             let table = document.getElementsByTagName("table-component");
             table[0].dblClickAction = () => {}

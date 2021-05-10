@@ -11,6 +11,12 @@ class TableComponent extends HTMLElement {
         this.rows = [];
         this.selected = [];
 
+    }
+
+    connectedCallback() {
+
+        this.setAttribute('page', '0');
+
         let tr = document.createElement( "tr" );
         tr.className = "t-header";
 
@@ -27,6 +33,7 @@ class TableComponent extends HTMLElement {
         table.appendChild(tbody);
 
         let pagination = document.createElement( "pagination-component" );
+        pagination.id = "pagination-table-component";
         
         let foot = document.createElement( "div" );
         foot.appendChild(pagination);
@@ -38,11 +45,7 @@ class TableComponent extends HTMLElement {
         
         this.appendChild(div);
 
-    }
-
-    connectedCallback() {
-
-        let tr = this.getElementsByClassName("t-header");
+        tr = this.getElementsByClassName("t-header");
 
         for( let i=0; i<this.headers.length; i++ ) {
             
@@ -54,72 +57,18 @@ class TableComponent extends HTMLElement {
 
         this.setAttribute( "rows-per-page", "10" );
         let rowsPerPage = parseInt(this.getAttribute("rows-per-page"));
-
-        let pagination = this.getElementsByTagName("pagination-component");
-        pagination[0].setAttribute("max", `${Math.ceil(this.rows.length/rowsPerPage)}`);
-
-        this.setAttribute( "page", "0" );
-
+        
     }
 
     static get observedAttributes() {
         return [
-            "page",
             "endpoint"
         ];
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
 
-        if( name === "page" ) {
-
-            let rowsPerPage = parseInt(this.getAttribute("rows-per-page"));
-
-            let tbody = this.getElementsByClassName("t-body");
-            tbody[0].innerHTML = ``;
-
-            for( let i=0; i<rowsPerPage; i++ ) {
-
-                let tr = document.createElement("tr");
-
-                tr.addEventListener("click", (elem) => {
-
-                    if( elem.target.parentElement.rowIndex <= this.rows.length ) {
-                        let active = document.getElementsByClassName("table-active");
-                        Array.prototype.forEach.call( active, ( row ) => row.removeAttribute("class") );
-                        elem.target.parentElement.setAttribute("class", "table-active");
-
-                        for(let i=0; i<this.headers.length; i++) {
-                            this.selected[this.headers[i]] = elem.target.parentElement.children[i].innerHTML;
-                        }
-                    }
-
-                });
-
-                tr.addEventListener("dblclick", (elem) => {
-                    if( elem.target.parentElement.rowIndex <= this.rows.length ) {
-                        this.dblClickAction();
-                    }
-                });
-
-                for( let j=0; j<this.headers.length; j++ ) {
-                    let td = document.createElement( "td" );
-                    if (rowsPerPage*newValue + i < this.rows.length) {
-                        td.innerHTML = this.rows[rowsPerPage*newValue + i][this.headers[j]];
-                    } else {
-                        td.innerHTML = "&nbsp";
-                    }
-                    tr.appendChild( td );
-                }
-
-                tbody[0].appendChild(tr);
-
-            }
-
-            let pagination = this.getElementsByTagName("pagination-component");
-            pagination[0].setAttribute("current", `${parseInt(newValue) + 1}`);
-
-        } else if (name === "endpoint") {
+        if (name === "endpoint") {
 
             this.headers = [];
             this.rows = [];
@@ -135,32 +84,97 @@ class TableComponent extends HTMLElement {
 
             }).then( (data) => {
 
-                if ( data.length > 0 ) {
-                    this.headers = Object.keys( data[0] );
+                
+                if( data.length != 0 ) {
+
+                    let currentPage = parseInt(this.getAttribute("page"));
+                    document.getElementById("pagination-table-component").page = currentPage;
+                    document.getElementById("current-page").innerHTML = currentPage + 1;
+
+                    if( currentPage > 0 ) {
+
+                        document.getElementById("previous-page").setAttribute("class", "page-item");
+
+                    } else {
+
+                        document.getElementById("previous-page").setAttribute("class", "page-item disabled");
+
+                    }
+
+                    if ( data.length > 0 ) {
+                        this.headers = Object.keys( data[0] );
+                    } else {
+                        this.headers = [];
+                    }
+                    this.rows = data;
+
+                    console.log(data);
+
+                    let tr = this.getElementsByClassName("t-header");
+                    tr[0].innerHTML = "";
+
+                    console.log(this);
+
+                    for( let i=0; i<this.headers.length; i++ ) {
+                        
+                        let th = document.createElement( "th" );
+                        th.innerHTML = this.headers[i];
+                        tr[0].appendChild(th);
+
+                    }
+
+                    let rowsPerPage = parseInt(this.getAttribute("rows-per-page"));
+
+                    let tbody = this.getElementsByClassName("t-body");
+                    tbody[0].innerHTML = ``;
+
+                    for( let i=0; i<rowsPerPage; i++ ) {
+
+                        let tr = document.createElement("tr");
+
+                        tr.addEventListener("click", (elem) => {
+
+                            if( elem.target.parentElement.rowIndex <= this.rows.length ) {
+                                let active = document.getElementsByClassName("table-active");
+                                Array.prototype.forEach.call( active, ( row ) => row.removeAttribute("class") );
+                                elem.target.parentElement.setAttribute("class", "table-active");
+
+                                for(let i=0; i<this.headers.length; i++) {
+                                    this.selected[this.headers[i]] = elem.target.parentElement.children[i].innerHTML;
+                                }
+                            }
+
+                        });
+
+                        tr.addEventListener("dblclick", (elem) => {
+                            if( elem.target.parentElement.rowIndex <= this.rows.length ) {
+                                this.dblClickAction();
+                            }
+                        });
+
+                        let page = document.getElementById("pagination-table-component").page;
+
+                        for( let j=0; j<this.headers.length; j++ ) {
+                            let td = document.createElement( "td" );
+                            if ( i < this.rows.length) {
+                                td.innerHTML = this.rows[i][this.headers[j]];
+                            } else {
+                                td.innerHTML = "&nbsp";
+                            }
+                            tr.appendChild( td );
+                        }
+
+                        tbody[0].appendChild(tr);
+
+                    }
+
                 } else {
-                    this.headers = [];
-                }
-                this.rows = data;
 
-                console.log(data);
-
-                let tr = this.getElementsByClassName("t-header");
-                tr[0].innerHTML = "";
-
-                for( let i=0; i<this.headers.length; i++ ) {
-                    
-                    let th = document.createElement( "th" );
-                    th.innerHTML = this.headers[i];
-                    tr[0].appendChild(th);
+                    let currentPage = parseInt(this.getAttribute("page")) - 1;
+                    this.setAttribute( 'page', `${currentPage}` )
+                    document.getElementById("next-page").setAttribute("class", "page-item disabled");
 
                 }
-
-                let rowsPerPage = parseInt(this.getAttribute("rows-per-page"));
-
-                let pagination = this.getElementsByTagName("pagination-component");
-                pagination[0].setAttribute("max", `${Math.ceil(this.rows.length/rowsPerPage)}`);
-
-                this.setAttribute( "page", "0" );
 
             }).catch( (err) => {
 
