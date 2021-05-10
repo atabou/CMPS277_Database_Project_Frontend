@@ -44,7 +44,8 @@ class GraphComponent extends HTMLElement {
                     }
 
                 } else {
-                    chart1.push( [Date.now().getFullYear() + "-" + (Date.now().getMonth() + 1) + '-' + Date.now().getDate(), 0, 100] )
+                    let date = new Date();
+                    chart1.push( [date.getFullYear() + "-" + (date.getMonth() + 1) + '-' + date.getDate(), 0, 100] )
                 }
 
                 let dataTable1 = google.visualization.arrayToDataTable(chart1);
